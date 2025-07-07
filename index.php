@@ -61,25 +61,25 @@
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="showSection('ajout-pret')">
+                <a href="views/Pret/pretForm.html" class="nav-link" onclick="showSection('ajout-pret')">
                     <i class="fas fa-plus-circle"></i>
                     <span>Ajouter Prêt</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="showSection('liste-prets')">
+                <a href="views/Pret/liste.html" class="nav-link" onclick="showSection('liste-prets')">
                     <i class="fas fa-list"></i>
                     <span>Liste des Prêts</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="showSection('echeancier')">
+                <a href="views/Pret/echeancier.html" class="nav-link" onclick="showSection('echeancier')">
                     <i class="fas fa-calendar-alt"></i>
                     <span>Échéancier</span>
                 </a>
             </div>
             <div class="nav-item">
-                <a href="#" class="nav-link" onclick="showSection('interets')">
+                <a href="views/Pret/interet.html" class="nav-link" onclick="showSection('interets')">
                     <i class="fas fa-chart-line"></i>
                     <span>Intérêts par Mois</span>
                 </a>
