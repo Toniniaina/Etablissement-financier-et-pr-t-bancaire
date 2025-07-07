@@ -8,7 +8,6 @@ USE banque;
 -- Table pour les fonds totaux de la banque
 CREATE TABLE Fonds(
     id_fonds INT AUTO_INCREMENT PRIMARY KEY,
-    -- Il est préférable d'utiliser DECIMAL pour les montants financiers
     montant_fonds DECIMAL(20, 2) NOT NULL
 );
 
@@ -83,9 +82,6 @@ CREATE TABLE Details_fonds(
     id_details_fonds INT AUTO_INCREMENT PRIMARY KEY,
     id_fonds INT NOT NULL,
     id_type_transactions INT NOT NULL,
-    -- Correction de la faute de frappe : transactionsn -> transactions
-    -- Suggestion : Ajout d'une colonne pour le montant de la transaction
-    montant_transaction DECIMAL(15, 2) NOT NULL,
     date_details DATE NOT NULL,
     -- Ajout d'une référence au prêt si la transaction est liée à un prêt
     id_prets INT NULL, -- NULL car une transaction n'est pas toujours liée à un prêt
