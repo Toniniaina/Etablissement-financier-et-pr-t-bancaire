@@ -62,4 +62,71 @@ class PretController {
 
         Flight::json(['success' => true, 'id_pret' => $idPret]);
     }
+
+    public static function rechercher() {
+        $data = Flight::request()->data;
+        $resultats = Pret::rechercheAvecFiltre($data);
+        Flight::json($resultats);
+    }
+
+    public static function approuver() {
+        $data = Flight::request()->data;
+    
+        $idPret = $data->id_prets;
+        $dateMouvement = $data->date_mouvement;
+    
+        $db = getDB();
+    
+        $stmtDate = $db->prepare("SELECT MAX(date_mouvement) FROM Mouvement_prets WHERE id_prets = ?");
+        $stmtDate->execute([$idPret]);
+        $dernierDateMouvement = $stmtDate->fetchColumn();
+    
+        if ($dernierDateMouvement !== false && $dateMouvement < $dernierDateMouvement) {
+            Flight::halt(400, "La date d'approbation ne peut pas être antérieure à la dernière date de mouvement existante ($dernierDateMouvement).");
+        }
+    
+        $stmt = $db->prepare("SELECT id_status_prets FROM Status_prets WHERE LOWER(nom_status) = 'approuve'");
+        $stmt->execute();
+        $idStatusApprouve = $stmt->fetchColumn();
+    
+        if (!$idStatusApprouve) {
+            Flight::halt(400, "Statut 'Approuvé' non trouvé");
+        }
+    
+        $stmt2 = $db->prepare("INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES (?, ?, ?)");
+        $stmt2->execute([$idPret, $idStatusApprouve, $dateMouvement]);
+    
+        Flight::json(['success' => true]);
+    }
+    public static function rejeter() {
+        $data = Flight::request()->data;
+    
+        $idPret = $data->id_prets;
+        $dateMouvement = $data->date_mouvement;
+    
+        $db = getDB();
+    
+        $stmtDate = $db->prepare("SELECT MAX(date_mouvement) FROM Mouvement_prets WHERE id_prets = ?");
+        $stmtDate->execute([$idPret]);
+        $dernierDateMouvement = $stmtDate->fetchColumn();
+    
+        if ($dernierDateMouvement !== false && $dateMouvement < $dernierDateMouvement) {
+            Flight::halt(400, "La date d'approbation ne peut pas être antérieure à la dernière date de mouvement existante ($dernierDateMouvement).");
+        }
+    
+        $stmt = $db->prepare("SELECT id_status_prets FROM Status_prets WHERE LOWER(nom_status) = 'rejete'");
+        $stmt->execute();
+        $idStatusApprouve = $stmt->fetchColumn();
+    
+        if (!$idStatusApprouve) {
+            Flight::halt(400, "Statut 'rejete' non trouvé");
+        }
+    
+        $stmt2 = $db->prepare("INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES (?, ?, ?)");
+        $stmt2->execute([$idPret, $idStatusApprouve, $dateMouvement]);
+    
+        Flight::json(['success' => true]);
+    }
+    
+    
 }

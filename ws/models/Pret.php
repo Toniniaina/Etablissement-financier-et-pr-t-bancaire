@@ -134,4 +134,53 @@ class Pret {
         $t = $tauxAnnuel / 12 / 100;
         return $capital * $t / (1 - pow(1 + $t, -$dureeMois));
     }
+
+    public static function rechercheAvecFiltre($data) {
+        $db = getDB();
+        $conditions = [];
+        $params = [];
+    
+        if (!empty($data->nom)) {
+            $conditions[] = "LOWER(c.nom_clients) LIKE ?";
+            $params[] = "%" . strtolower($data->nom) . "%";
+        }
+    
+        if (!empty($data->prenom)) {
+            $conditions[] = "LOWER(c.prenom_clients) LIKE ?";
+            $params[] = "%" . strtolower($data->prenom) . "%";
+        }
+    
+        if (!empty($data->id_types_pret)) {
+            $conditions[] = "p.id_types_pret = ?";
+            $params[] = $data->id_types_pret;
+        }
+    
+        $where = $conditions ? "WHERE " . implode(" AND ", $conditions) : "";
+    
+        $sql = "
+            SELECT
+                p.*,
+                c.nom_clients,
+                c.prenom_clients,
+                t.nom_type_pret,
+                s.nom_status AS statut_actuel
+            FROM Prets p
+            JOIN Clients c ON p.id_clients = c.id_clients
+            JOIN Types_pret t ON p.id_types_pret = t.id_types_pret
+            LEFT JOIN Mouvement_prets m ON m.id_prets = p.id_prets
+            LEFT JOIN Status_prets s ON s.id_status_prets = m.id_status_prets
+            INNER JOIN (
+                SELECT id_prets, MAX(date_mouvement) AS max_date
+                FROM Mouvement_prets
+                GROUP BY id_prets
+            ) m2 ON m.id_prets = m2.id_prets AND m.date_mouvement = m2.max_date
+            $where
+            ORDER BY p.date_debut DESC
+        ";
+    
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
 }

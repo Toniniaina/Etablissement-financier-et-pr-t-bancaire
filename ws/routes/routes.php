@@ -20,6 +20,10 @@ Flight::route('DELETE /etudiants/@id', ['EtudiantController', 'delete']);
 Flight::route('GET /clients', ['ClientController', 'getAll']);
 Flight::route('GET /typesprets', ['PretController', 'getAllTypes']);
 Flight::route('POST /prets', ['PretController', 'ajouterPret']);
+Flight::route('POST /prets/search', ['PretController', 'rechercher']);
+Flight::route('POST /prets/approuver', ['PretController', 'approuver']);
+Flight::route('POST /prets/rejeter', ['PretController', 'rejeter']);
+
 
 Flight::route('GET /fonds', ['FondController', 'getAll']);
 Flight::route('GET /fonds/@id', ['FondController', 'getById']);
@@ -28,3 +32,4 @@ Flight::route('PUT /fonds/@id', ['FondController', 'update']);
 Flight::route('DELETE /fonds/@id', ['FondController', 'delete']);
 
 Flight::route('GET /fond_actuel', ['DetailFondController', 'getFondActuel']);
+

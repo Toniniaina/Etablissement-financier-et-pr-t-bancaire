@@ -33,6 +33,8 @@ CREATE TABLE Prets(
     id_types_pret INT NOT NULL,
     id_clients INT NOT NULL,
     montant_prets DECIMAL(15, 2) NOT NULL,
+    assurance DECIMAL(5,2) DEFAULT NULL,
+    delai_grace INT DEFAULT 0,
     date_debut DATE NOT NULL,
     duree_en_mois INT NOT NULL,
     FOREIGN KEY (id_types_pret) REFERENCES Types_pret(id_types_pret),
@@ -70,8 +72,3 @@ CREATE TABLE Details_fonds(
     
 );
 
-
-
-
-ALTER TABLE Prets ADD assurance DECIMAL(5,2) DEFAULT 0.00;
-ALTER TABLE Prets ADD delai_grace INT DEFAULT 0;
