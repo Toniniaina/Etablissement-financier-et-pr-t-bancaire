@@ -43,3 +43,23 @@ INSERT INTO Details_fonds (id_fonds, id_type_transactions, montant_transaction, 
                                                                                                             (1, 3, 500000.00, '2025-02-10', 1),
                                                                                                             (1, 3, 500000.00, '2025-03-10', 1),
                                                                                                             (1, 3, 150000.00, '2025-03-15', 2);
+SELECT
+    DATE_FORMAT(p.date_debut, '%Y-%m') AS mois_annee,
+    SUM(p.montant_prets * (t.pourcentage / 100)) AS interets_totaux
+FROM Prets p
+         JOIN Taux t ON p.id_types_pret = t.id_types_pret
+-- On prend le dernier statut de chaque prêt
+         JOIN (
+    SELECT mp.id_prets, sp.nom_status
+    FROM Mouvement_prets mp
+             JOIN Status_prets sp ON mp.id_status_prets = sp.id_status_prets
+    WHERE mp.date_mouvement = (
+        SELECT MAX(mp2.date_mouvement)
+        FROM Mouvement_prets mp2
+        WHERE mp2.id_prets = mp.id_prets
+    )
+) AS dernier_statut ON dernier_statut.id_prets = p.id_prets
+WHERE dernier_statut.nom_status IN ('Approuvé', 'En cours de remboursement')
+  AND p.date_debut BETWEEN '2025-01-01' AND '2025-12-31'
+GROUP BY DATE_FORMAT(p.date_debut, '%Y-%m')
+ORDER BY mois_annee;
