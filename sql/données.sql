@@ -1,8 +1,8 @@
 INSERT INTO Fonds (montant_fonds) VALUES (100000000.00);
 INSERT INTO Types_pret (nom_type_pret) VALUES
-                                           ('Crédit immobilier'),
-                                           ('Crédit consommation'),
-                                           ('Crédit auto');
+                                           ('Credit immobilier'),
+                                           ('Credit consommation'),
+                                           ('Credit auto');
 INSERT INTO Taux (id_types_pret, pourcentage) VALUES
                                                   (1, 5.50),  -- Crédit immobilier
                                                   (2, 9.25),  -- Crédit consommation
@@ -36,8 +36,7 @@ INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
     (3, 1, '2025-03-03');
 INSERT INTO Type_transactions (nom_type_transactions) VALUES
                                                           ('Dépôt'),
-                                                          ('Retrait'),
-                                                          ('Prélèvement prêt');
+                                                          ('Retrait');
 -- Prélèvements liés aux remboursements de prêt (exemple simplifié)
 INSERT INTO Details_fonds (id_fonds, id_type_transactions, montant_transaction, date_details, id_prets) VALUES
                                                                                                             (1, 3, 500000.00, '2025-02-10', 1),
@@ -63,3 +62,23 @@ WHERE dernier_statut.nom_status IN ('Approuvé', 'En cours de remboursement')
   AND p.date_debut BETWEEN '2025-01-01' AND '2025-12-31'
 GROUP BY DATE_FORMAT(p.date_debut, '%Y-%m')
 ORDER BY mois_annee;
+INSERT INTO Details_fonds (id_fonds, id_type_transactions, date_details, id_prets) VALUES
+                                                                                                            (1, 3,'2025-02-10', 1),
+                                                                                                            (1, 3,'2025-03-10', 1),
+                                                                                                            (1, 3,'2025-03-15', 2);
+
+INSERT INTO Fonds (montant_fonds) VALUES
+(500000.00),  -- id_fonds = 1 (Dépôt)
+(200000.00),  -- id_fonds = 2 (Dépôt)
+(100000.00);  -- id_fonds = 3 (Prélèvement prêt)
+
+-- 2 dépôts
+INSERT INTO Details_fonds (id_fonds, id_type_transactions, id_prets, date_details)
+VALUES
+(2, 1, NULL, '2025-07-01'),  -- 500000.00 dépôt
+(3, 1, NULL, '2025-07-05');  -- 200000.00 dépôt
+
+-- 1 prélèvement pour un prêt
+INSERT INTO Details_fonds (id_fonds, id_type_transactions, id_prets, date_details)
+VALUES
+(4, 2, NULL, '2025-07-06');  -- 100000.00 sorti pour le prêt id=1

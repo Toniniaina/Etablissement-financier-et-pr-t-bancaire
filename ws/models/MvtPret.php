@@ -47,4 +47,28 @@ class MvtPret {
         $stmt = $db->prepare("DELETE FROM Mouvement_prets WHERE id_mouvement_prets = ?");
         $stmt->execute([$id_mouvement_prets]);
     }
+
+    public static function ajouterMouvement($data) {
+        $db = getDB();
+
+        // Récupérer l'ID du statut "En attente"
+        $stmt = $db->prepare("SELECT id_status_prets FROM Status_prets WHERE LOWER(nom_status) = LOWER(?) LIMIT 1");
+        $stmt->execute(['En attente']);
+        $idStatus = $stmt->fetchColumn();
+
+        if (!$idStatus) {
+            Flight::halt(500, "Statut 'En attente' introuvable dans Status_prets");
+        }
+
+        // Insérer le mouvement avec l'ID récupéré
+        $stmt2 = $db->prepare("
+            INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement)
+            VALUES (?, ?, ?)
+        ");
+        $stmt2->execute([
+            $data['id_prets'],
+            $idStatus,
+            $data['date_mouvement']
+        ]);
+    }
 }
