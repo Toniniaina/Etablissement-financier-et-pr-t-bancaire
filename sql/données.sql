@@ -35,7 +35,7 @@ INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
 INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
     (3, 1, '2025-03-03');
 INSERT INTO Type_transactions (nom_type_transactions) VALUES
-                                                          ('Dépôt'),
+                                                          ('Depot'),
                                                           ('Retrait'),
                                                           ('Prélèvement prêt');
 -- Prélèvements liés aux remboursements de prêt (exemple simplifié)
