@@ -1,110 +1,170 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <title>Simulation de prêt</title>
-    <style>
-      body {
-        font-family: Arial;
-        padding: 20px;
-        max-width: 600px;
-        margin: auto;
-      }
-      input,
-      select {
-        width: 100%;
-        padding: 8px;
-        margin: 10px 0;
-      }
-      .result {
-        margin-top: 20px;
-        padding: 15px;
-        background: #f5f5f5;
-        border-radius: 8px;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Simuler un prêt</h1>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Simulation de Prêt</title>
 
-    <label for="type">Type de prêt</label>
-    <select id="type" onchange="calculer()"></select>
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="../../scss/style.scss"/>
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+            <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+            <div class="logo ms-3">
+                <i class="fas fa-university"></i>
+                <span>FinanceBank</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline-light btn-sm"><i class="fas fa-user"></i> Profil</button>
+            <button class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+        </div>
+    </div>
+</header>
 
-    <label for="montant">Montant à emprunter (Ar)</label>
-    <input type="number" id="montant" oninput="calculer()" />
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h5>Menu Principal</h5>
+        <div class="sidebar-subtitle">Gestion Financière</div>
+    </div>
+    <div class="nav-menu">
+        <div class="nav-item"><a href="#" class="nav-link"><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a></div>
+        <div class="nav-item"><a href="#" class="nav-link active"><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a></div>
+        <div class="nav-item"><a href="pretForm.html" class="nav-link"><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a></div>
+        <div class="nav-item"><a href="liste.html" class="nav-link"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
+        <div class="nav-item"><a href="echeancier.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
+        <div class="nav-item"><a href="interet.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <div class="user-details">
+                <div class="user-name">Admin</div>
+                <div class="user-role">Gestionnaire</div>
+            </div>
+        </div>
+    </div>
+</nav>
 
-    <label for="duree">Durée en mois</label>
-    <input type="number" id="duree" oninput="calculer()" />
+<!-- Main Content -->
+<main class="main-content" id="mainContent">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h1><i class="fas fa-calculator me-3"></i>Simulation de Prêt</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Accueil</a></li>
+                    <li class="breadcrumb-item active">Simulation de Prêt</li>
+                </ol>
+            </nav>
+        </div>
 
-    <div class="result" id="resultat" style="display: none"></div>
+        <!-- Formulaire -->
+        <div class="form-section fade-in">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="montant" class="form-label">Montant à emprunter</label>
+                    <input type="number" class="form-control" id="montant" placeholder="Ex: 1 000 000" min="1000"/>
+                </div>
+                <div class="col-md-4">
+                    <label for="duree" class="form-label">Durée (en mois)</label>
+                    <input type="number" class="form-control" id="duree" placeholder="Ex: 12" min="1"/>
+                </div>
+                <div class="col-md-4">
+                    <label for="type" class="form-label">Type de prêt</label>
+                    <select class="form-select" id="type"></select>
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="calculer()"><i class="fas fa-calculator me-2"></i>Calculer</button>
+        </div>
 
-    <script>
-      const apiBase =
-        "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
-      let tauxPret = [];
+        <!-- Résultat -->
+        <div id="resultat" class="alert alert-info mt-4 fade-in" style="display: none;"></div>
+    </div>
+</main>
 
-      function ajax(method, url, data, callback) {
+<!-- JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+    let tauxPret = [];
+
+    function ajax(method, url, data, callback) {
         const xhr = new XMLHttpRequest();
         xhr.open(method, apiBase + url, true);
-        xhr.setRequestHeader(
-          "Content-Type",
-          "application/x-www-form-urlencoded"
-        );
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = () => {
-          if (xhr.readyState === 4 && xhr.status === 200) {
-            callback(JSON.parse(xhr.responseText));
-          }
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
         };
         xhr.send(data);
-      }
+    }
 
-      function chargerTaux() {
+    function chargerTaux() {
         ajax("GET", "/taux", null, (data) => {
-          tauxPret = data;
-          const select = document.getElementById("type");
-          data.forEach((t) => {
-            const opt = document.createElement("option");
-            opt.value = t.id_types_pret;
-            opt.textContent = `${t.nom_type_pret} (${t.pourcentage}%/an)`;
-            select.appendChild(opt);
-          });
+            tauxPret = data;
+            const select = document.getElementById("type");
+            data.forEach((t) => {
+                const opt = document.createElement("option");
+                opt.value = t.id_types_pret;
+                opt.textContent = `${t.nom_type_pret} (${t.pourcentage}%/an)`;
+                select.appendChild(opt);
+            });
         });
-      }
+    }
 
-      function calculer() {
-  const montant = parseFloat(document.getElementById("montant").value);
-  const duree = parseInt(document.getElementById("duree").value);
-  const idType = parseInt(document.getElementById("type").value);
+    function calculer() {
+        const montant = parseFloat(document.getElementById("montant").value);
+        const duree = parseInt(document.getElementById("duree").value);
+        const idType = parseInt(document.getElementById("type").value);
 
-  if (!montant || !duree || !idType) {
-    document.getElementById("resultat").style.display = "none";
-    return;
-  }
+        if (!montant || !duree || !idType) {
+            document.getElementById("resultat").style.display = "none";
+            return;
+        }
 
-  const type = tauxPret.find(t => t.id_types_pret == idType);
-  if (!type) return;
+        const type = tauxPret.find(t => t.id_types_pret == idType);
+        if (!type) return;
 
-  const tauxAnnuel = parseFloat(type.pourcentage);
-  const tauxMensuel = tauxAnnuel / 12 / 100; // taux en décimal
+        const tauxAnnuel = parseFloat(type.pourcentage);
+        const tauxMensuel = tauxAnnuel / 12 / 100;
 
-  // Formule d’amortissement constant (facile pour simulation simple)
-  const totalInteret = montant * tauxMensuel * duree;
-  const total = montant + totalInteret;
-  const mensualite = total / duree;
+        const totalInteret = montant * tauxMensuel * duree;
+        const total = montant + totalInteret;
+        const mensualite = total / duree;
 
-  document.getElementById("resultat").style.display = "block";
-  document.getElementById("resultat").innerHTML = `
-    <strong>Montant demandé :</strong> ${montant.toLocaleString()} Ar<br>
-    <strong>Durée :</strong> ${duree} mois<br>
-    <strong>Taux annuel :</strong> ${tauxAnnuel}%<br>
-    <strong>Taux mensuel :</strong> ${(tauxMensuel * 100).toFixed(3)}%<br>
-    <strong>Intérêt total :</strong> ${totalInteret.toFixed(2).toLocaleString()} Ar<br>
-    <strong>Montant total à rembourser :</strong> ${total.toFixed(2).toLocaleString()} Ar<br>
-    <strong>Mensualité estimée :</strong> ${mensualite.toFixed(2).toLocaleString()} Ar/mois
-  `;
-}
+        document.getElementById("resultat").style.display = "block";
+        document.getElementById("resultat").innerHTML = `
+        <strong>Montant demandé :</strong> ${montant.toLocaleString()} Ar<br>
+        <strong>Durée :</strong> ${duree} mois<br>
+        <strong>Taux annuel :</strong> ${tauxAnnuel}%<br>
+        <strong>Taux mensuel :</strong> ${(tauxMensuel * 100).toFixed(3)}%<br>
+        <strong>Intérêt total :</strong> ${totalInteret.toFixed(2).toLocaleString()} Ar<br>
+        <strong>Montant total à rembourser :</strong> ${total.toFixed(2).toLocaleString()} Ar<br>
+        <strong>Mensualité estimée :</strong> ${mensualite.toFixed(2).toLocaleString()} Ar/mois
+      `;
+    }
 
-      chargerTaux();
-    </script>
-  </body>
+    // Initialiser
+    document.addEventListener("DOMContentLoaded", () => {
+        chargerTaux();
+    });
+
+    // Sidebar responsive
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('sidebar-collapsed');
+    });
+</script>
+</body>
 </html>

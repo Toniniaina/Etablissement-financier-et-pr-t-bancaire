@@ -1,47 +1,91 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Liste des prêts</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        padding: 20px;
-      }
-      input,
-      select,
-      button {
-        margin: 5px;
-        padding: 5px;
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-top: 20px;
-      }
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Liste des prêts</h1>
-    <div>
-      <input type="text" id="nom" placeholder="Nom client" />
-      <input type="text" id="prenom" placeholder="Prénom client" />
-      <select id="typePret">
-        <option value="">-- Type de prêt --</option>
-      </select>
-      <button onclick="rechercherPrets()">🔍 Rechercher</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>Liste des prêts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Bootstrap + Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../../scss/style.scss" />
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+      <div class="logo ms-3">
+        <i class="fas fa-university"></i><span>FinanceBank</span>
+      </div>
     </div>
-    <table id="table-prets">
-      <thead>
+    <div class="header-actions">
+      <button class="btn btn-outline-light btn-sm"><i class="fas fa-user"></i> Profil</button>
+      <button class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+    </div>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h5>Menu Principal</h5>
+    <div class="sidebar-subtitle">Gestion Financière</div>
+  </div>
+  <div class="nav-menu">
+    <div class="nav-item"><a href="#" class="nav-link"><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a></div>
+    <div class="nav-item"><a href="#" class="nav-link"><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a></div>
+    <div class="nav-item"><a href="#" class="nav-link"><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a></div>
+    <div class="nav-item"><a href="#" class="nav-link active"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
+    <div class="nav-item"><a href="echeancier.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
+    <div class="nav-item"><a href="interet.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar"><i class="fas fa-user"></i></div>
+      <div class="user-details">
+        <div class="user-name">Admin</div>
+        <div class="user-role">Gestionnaire</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content" id="mainContent">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h1><i class="fas fa-list me-3"></i>Liste des prêts</h1>
+    </div>
+
+    <!-- Filtres -->
+    <div class="row g-3 align-items-end mb-4 fade-in">
+      <div class="col-md-3">
+        <label for="nom" class="form-label">Nom client</label>
+        <input type="text" class="form-control" id="nom" placeholder="Ex : Rakoto" />
+      </div>
+      <div class="col-md-3">
+        <label for="prenom" class="form-label">Prénom client</label>
+        <input type="text" class="form-control" id="prenom" placeholder="Ex : Jean" />
+      </div>
+      <div class="col-md-3">
+        <label for="typePret" class="form-label">Type de prêt</label>
+        <select class="form-select" id="typePret">
+          <option value="">-- Tous les types --</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-grid">
+        <button class="btn btn-primary" onclick="rechercherPrets()">
+          <i class="fas fa-search me-2"></i>Rechercher
+        </button>
+      </div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-responsive fade-in">
+      <table class="table table-bordered table-striped align-middle" id="table-prets">
+        <thead class="table-light">
         <tr>
           <th>Client</th>
           <th>Type de prêt</th>
@@ -49,164 +93,132 @@
           <th>Assurance</th>
           <th>Délai de grâce</th>
           <th>Date début</th>
-          <th>Durée (mois)</th>
+          <th>Durée</th>
           <th>Statut</th>
           <th>Approuver</th>
           <th>Rejeter</th>
         </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</main>
 
-    <script>
-      const apiBase =
-        "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+<!-- JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
 
-      function ajax(method, url, data, callback) {
-        const xhr = new XMLHttpRequest();
-        xhr.open(method, apiBase + url, true);
-        xhr.setRequestHeader(
-          "Content-Type",
-          "application/x-www-form-urlencoded"
-        );
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              callback(JSON.parse(xhr.responseText));
-            } else {
-              alert("Erreur : " + xhr.responseText);
-            }
-          }
-        };
-        xhr.send(data);
+  function ajax(method, url, data, callback) {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, apiBase + url, true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) callback(JSON.parse(xhr.responseText));
+        else alert("Erreur : " + xhr.responseText);
       }
+    };
+    xhr.send(data);
+  }
 
-      function chargerTypesPret() {
-        ajax("GET", "/typesprets", null, (data) => {
-          const select = document.getElementById("typePret");
-          data.forEach((tp) => {
-            const option = document.createElement("option");
-            option.value = tp.id_types_pret;
-            option.textContent = tp.nom_type_pret;
-            select.appendChild(option);
-          });
-        });
-      }
+  function chargerTypesPret() {
+    ajax("GET", "/typesprets", null, (data) => {
+      const select = document.getElementById("typePret");
+      data.forEach((tp) => {
+        const option = document.createElement("option");
+        option.value = tp.id_types_pret;
+        option.textContent = tp.nom_type_pret;
+        select.appendChild(option);
+      });
+    });
+  }
 
-      function rechercherPrets() {
-        const nom = document.getElementById("nom").value;
-        const prenom = document.getElementById("prenom").value;
-        const typePret = document.getElementById("typePret").value;
+  function rechercherPrets() {
+    const nom = document.getElementById("nom").value;
+    const prenom = document.getElementById("prenom").value;
+    const typePret = document.getElementById("typePret").value;
 
-        const params = `nom=${encodeURIComponent(
-          nom
-        )}&prenom=${encodeURIComponent(prenom)}&id_types_pret=${typePret}`;
-        ajax("POST", "/prets/search", params, afficherPrets);
-      }
+    const params = `nom=${encodeURIComponent(nom)}&prenom=${encodeURIComponent(prenom)}&id_types_pret=${typePret}`;
+    ajax("POST", "/prets/search", params, afficherPrets);
+  }
 
-      function afficherPrets(data) {
-        const tbody = document.querySelector("#table-prets tbody");
-        tbody.innerHTML = "";
+  function afficherPrets(data) {
+    const tbody = document.querySelector("#table-prets tbody");
+    tbody.innerHTML = "";
 
-        data.forEach((p) => {
-          const tr = document.createElement("tr");
-
-          tr.innerHTML = `
-      <td>${p.nom_clients} ${p.prenom_clients}</td>
-      <td>${p.nom_type_pret}</td>
-      <td>${p.montant_prets} Ar</td>
-      <td>${p.assurance ?? "-"}</td>
-      <td>${p.delai_grace ?? 0}</td>
-      <td>${p.date_debut}</td>
-      <td>${p.duree_en_mois}</td>
-      <td>${p.statut_actuel}</td>
-      <td>
-        ${
-          p.statut_actuel.toLowerCase() === "en attente"
-            ? `
-              <button onclick="toggleForm(${p.id_prets}, 'approuver')">Approuver</button>
-              <div id="form-approuver-${p.id_prets}" style="display:none; margin-top:5px;">
-                <input type="date" id="dateApprobation-${p.id_prets}" />
-                <button onclick="approuverPret(${p.id_prets})">Valider</button>
+    data.forEach((p) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+          <td>${p.nom_clients} ${p.prenom_clients}</td>
+          <td>${p.nom_type_pret}</td>
+          <td>${p.montant_prets} Ar</td>
+          <td>${p.assurance ?? "-"}</td>
+          <td>${p.delai_grace ?? 0}</td>
+          <td>${p.date_debut}</td>
+          <td>${p.duree_en_mois} mois</td>
+          <td>${p.statut_actuel}</td>
+          <td>${p.statut_actuel.toLowerCase() === "en attente"
+              ? `
+              <button class="btn btn-success btn-sm mb-1" onclick="toggleForm(${p.id_prets}, 'approuver')">✔ Approuver</button>
+              <div id="form-approuver-${p.id_prets}" style="display:none;" class="mt-1">
+                <input type="date" id="dateApprobation-${p.id_prets}" class="form-control form-control-sm mb-1" />
+                <button class="btn btn-sm btn-primary" onclick="approuverPret(${p.id_prets})">Valider</button>
               </div>
-            `
-            : "-"
-        }
-      </td>
-      <td>
-        ${
-          p.statut_actuel.toLowerCase() === "en attente"
-            ? `
-              <button onclick="toggleForm(${p.id_prets}, 'rejeter')">Rejeter</button>
-              <div id="form-rejeter-${p.id_prets}" style="display:none; margin-top:5px;">
-                <input type="date" id="dateApprobationRejet-${p.id_prets}" />
-                <button onclick="rejeterPret(${p.id_prets})">Valider</button>
+            ` : "-"}</td>
+          <td>${p.statut_actuel.toLowerCase() === "en attente"
+              ? `
+              <button class="btn btn-danger btn-sm mb-1" onclick="toggleForm(${p.id_prets}, 'rejeter')">✖ Rejeter</button>
+              <div id="form-rejeter-${p.id_prets}" style="display:none;" class="mt-1">
+                <input type="date" id="dateApprobationRejet-${p.id_prets}" class="form-control form-control-sm mb-1" />
+                <button class="btn btn-sm btn-secondary" onclick="rejeterPret(${p.id_prets})">Valider</button>
               </div>
-            `
-            : "-"
-        }
-      </td>
-    `;
+            ` : "-"}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
 
-          tbody.appendChild(tr);
-        });
-      }
+  function toggleForm(idPret, action) {
+    const approuverForm = document.getElementById(`form-approuver-${idPret}`);
+    const rejeterForm = document.getElementById(`form-rejeter-${idPret}`);
 
-      function toggleForm(idPret, action) {
-        const approuverForm = document.getElementById(
-          `form-approuver-${idPret}`
-        );
-        const rejeterForm = document.getElementById(`form-rejeter-${idPret}`);
+    if (action === "approuver") {
+      if (rejeterForm) rejeterForm.style.display = "none";
+      approuverForm.style.display = approuverForm.style.display === "none" ? "block" : "none";
+    } else if (action === "rejeter") {
+      if (approuverForm) approuverForm.style.display = "none";
+      rejeterForm.style.display = rejeterForm.style.display === "none" ? "block" : "none";
+    }
+  }
 
-        if (action === "approuver") {
-          // Ferme l'autre si ouvert
-          if (rejeterForm) rejeterForm.style.display = "none";
-          // Toggle celui-ci
-          approuverForm.style.display =
-            approuverForm.style.display === "none" ? "block" : "none";
-        } else if (action === "rejeter") {
-          if (approuverForm) approuverForm.style.display = "none";
-          rejeterForm.style.display =
-            rejeterForm.style.display === "none" ? "block" : "none";
-        }
-      }
+  function approuverPret(idPret) {
+    const date = document.getElementById(`dateApprobation-${idPret}`).value;
+    if (!date) return alert("Veuillez choisir une date.");
+    ajax("POST", "/prets/approuver", `id_prets=${idPret}&date_mouvement=${date}`, () => {
+      alert("Prêt approuvé !");
+      rechercherPrets();
+    });
+  }
 
-      function approuverPret(idPret) {
-        const dateInput = document.getElementById(`dateApprobation-${idPret}`);
-        const dateMouvement = dateInput.value;
+  function rejeterPret(idPret) {
+    const date = document.getElementById(`dateApprobationRejet-${idPret}`).value;
+    if (!date) return alert("Veuillez choisir une date.");
+    ajax("POST", "/prets/rejeter", `id_prets=${idPret}&date_mouvement=${date}`, () => {
+      alert("Prêt rejeté !");
+      rechercherPrets();
+    });
+  }
 
-        if (!dateMouvement) {
-          alert("Veuillez choisir une date d'approbation.");
-          return;
-        }
+  document.addEventListener("DOMContentLoaded", () => {
+    chargerTypesPret();
+    rechercherPrets();
+  });
 
-        const data = `id_prets=${idPret}&date_mouvement=${dateMouvement}`;
-        ajax("POST", "/prets/approuver", data, (res) => {
-          alert("Prêt approuvé avec succès !");
-          rechercherPrets();
-        });
-      }
-
-      function rejeterPret(idPret) {
-        const dateInput = document.getElementById(
-          `dateApprobationRejet-${idPret}`
-        );
-        const dateMouvement = dateInput.value;
-
-        if (!dateMouvement) {
-          alert("Veuillez choisir une date de rejet.");
-          return;
-        }
-
-        const data = `id_prets=${idPret}&date_mouvement=${dateMouvement}`;
-        ajax("POST", "/prets/rejeter", data, (res) => {
-          alert("Prêt rejeté avec succès !");
-          rechercherPrets();
-        });
-      }
-
-      chargerTypesPret();
-      rechercherPrets(); // pour afficher tout au début
-    </script>
-  </body>
+  document.getElementById("sidebarToggle").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("collapsed");
+    document.getElementById("mainContent").classList.toggle("sidebar-collapsed");
+  });
+</script>
+</body>
 </html>
