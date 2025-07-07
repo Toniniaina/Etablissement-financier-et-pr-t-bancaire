@@ -36,7 +36,8 @@ class PretController {
     public static function ajouterPret() {
         $data = Flight::request()->data;
 
-        $fondsDisponible = Fond::getFondActuelJusque($data->date_debut);
+        $fonds = Fond::getFondActuelJusque($data->date_debut);
+        $fondsDisponible = $fonds['fond_actuel'];
         if ($fondsDisponible < $data->montant_prets) {
             Flight::halt(400, "Fond insuffisants");
         }
