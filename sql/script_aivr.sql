@@ -67,5 +67,4 @@ CREATE TABLE Details_fonds(
     date_details DATE NOT NULL,
     FOREIGN KEY (id_fonds) REFERENCES Fonds(id_fonds),
     FOREIGN KEY (id_prets) REFERENCES Prets(id_prets)
-    
 );
