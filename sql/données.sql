@@ -1,84 +1,32 @@
-INSERT INTO Fonds (montant_fonds) VALUES (100000000.00);
-INSERT INTO Types_pret (nom_type_pret) VALUES
-                                           ('Credit immobilier'),
-                                           ('Credit consommation'),
-                                           ('Credit auto');
-INSERT INTO Taux (id_types_pret, pourcentage) VALUES
-                                                  (1, 5.50),  -- Crédit immobilier
-                                                  (2, 9.25),  -- Crédit consommation
-                                                  (3, 7.75);  -- Crédit auto
-INSERT INTO Clients (nom_clients, prenom_clients, date_naissance, salaire) VALUES
-                                                                               ('RANAIVO', 'Jean', '1990-04-15', 1200000.00),
-                                                                               ('RAKOTO', 'Mickael', '1985-10-22', 950000.00),
-                                                                               ('RASOA', 'Fanja', '1995-08-07', 750000.00);
-INSERT INTO Prets (id_types_pret, id_clients, montant_prets, date_debut, duree_en_mois) VALUES
-                                                                                            (1, 1, 50000000.00, '2025-01-10', 240),  -- Jean
-                                                                                            (2, 2, 3000000.00, '2025-02-05', 24),    -- Mickael
-                                                                                            (3, 3, 6000000.00, '2025-03-01', 36);    -- Fanja
+
 INSERT INTO Status_prets (nom_status) VALUES
                                           ('En attente'),
                                           ('Approuvé'),
                                           ('Rejeté'),
                                           ('En cours de remboursement'),
                                           ('Remboursé');
--- Prêt 1 (Jean) : Approuvé puis en cours
-INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
-                                                                            (1, 2, '2025-01-12'),  -- Approuvé
-                                                                            (1, 4, '2025-02-01');  -- En cours
 
--- Prêt 2 (Mickael) : Approuvé puis en cours
-INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
-                                                                            (2, 2, '2025-02-07'),
-                                                                            (2, 4, '2025-03-01');
-
--- Prêt 3 (Fanja) : En attente, pas encore approuvé
-INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
-    (3, 1, '2025-03-03');
 INSERT INTO Type_transactions (nom_type_transactions) VALUES
-                                                          ('Dépôt'),
+                                                          ('Depot'),
                                                           ('Retrait');
--- Prélèvements liés aux remboursements de prêt (exemple simplifié)
-INSERT INTO Details_fonds (id_fonds, id_type_transactions, montant_transaction, date_details, id_prets) VALUES
-                                                                                                            (1, 3, 500000.00, '2025-02-10', 1),
-                                                                                                            (1, 3, 500000.00, '2025-03-10', 1),
-                                                                                                            (1, 3, 150000.00, '2025-03-15', 2);
-SELECT
-    DATE_FORMAT(p.date_debut, '%Y-%m') AS mois_annee,
-    SUM(p.montant_prets * (t.pourcentage / 100)) AS interets_totaux
-FROM Prets p
-         JOIN Taux t ON p.id_types_pret = t.id_types_pret
--- On prend le dernier statut de chaque prêt
-         JOIN (
-    SELECT mp.id_prets, sp.nom_status
-    FROM Mouvement_prets mp
-             JOIN Status_prets sp ON mp.id_status_prets = sp.id_status_prets
-    WHERE mp.date_mouvement = (
-        SELECT MAX(mp2.date_mouvement)
-        FROM Mouvement_prets mp2
-        WHERE mp2.id_prets = mp.id_prets
-    )
-) AS dernier_statut ON dernier_statut.id_prets = p.id_prets
-WHERE dernier_statut.nom_status IN ('Approuvé', 'En cours de remboursement')
-  AND p.date_debut BETWEEN '2025-01-01' AND '2025-12-31'
-GROUP BY DATE_FORMAT(p.date_debut, '%Y-%m')
-ORDER BY mois_annee;
-INSERT INTO Details_fonds (id_fonds, id_type_transactions, date_details, id_prets) VALUES
-                                                                                                            (1, 3,'2025-02-10', 1),
-                                                                                                            (1, 3,'2025-03-10', 1),
-                                                                                                            (1, 3,'2025-03-15', 2);
 
-INSERT INTO Fonds (montant_fonds) VALUES
-(500000.00),  -- id_fonds = 1 (Dépôt)
-(200000.00),  -- id_fonds = 2 (Dépôt)
-(100000.00);  -- id_fonds = 3 (Prélèvement prêt)
 
--- 2 dépôts
-INSERT INTO Details_fonds (id_fonds, id_type_transactions, id_prets, date_details)
-VALUES
-(2, 1, NULL, '2025-07-01'),  -- 500000.00 dépôt
-(3, 1, NULL, '2025-07-05');  -- 200000.00 dépôt
+INSERT INTO Types_pret (nom_type_pret) VALUES
+                                          ('Prêt personnel'),
+                                          ('Prêt immobilier'),
+                                          ('Prêt auto'),
+                                          ('Prêt étudiant');
 
--- 1 prélèvement pour un prêt
-INSERT INTO Details_fonds (id_fonds, id_type_transactions, id_prets, date_details)
-VALUES
-(4, 2, NULL, '2025-07-06');  -- 100000.00 sorti pour le prêt id=1
+INSERT INTO Taux (id_types_pret, pourcentage) VALUES
+(1, 5.50),   -- Prêt personnel
+(2, 3.75),   -- Prêt immobilier
+(3, 7.00),   -- Prêt étudiant
+(4, 4.20);   -- Prêt auto
+
+
+INSERT INTO Clients (nom_clients, prenom_clients, date_naissance, salaire) VALUES
+('ANDRIAMAMPIANINA', 'Hery', '1980-09-12', 1300000.00),
+('RAZAFINDRAKOTO', 'Nirina', '1992-01-30', 1000000.00),
+('RAKOTOBE', 'Tiana', '1998-06-25', 800000.00);
+
+

@@ -36,20 +36,18 @@ class PretController {
     public static function ajouterPret() {
         $data = Flight::request()->data;
 
-        // Vérifier les fonds disponibles
         $fondsDisponible = Fond::getFondActuelJusque($data->date_debut);
         if ($fondsDisponible < $data->montant_prets) {
             Flight::halt(400, "Fond insuffisants");
         }
 
-        // Créer le prêt via le modèle
         $idPret = Pret::create($data);
 
      
         MvtPret::ajouterMouvement([
             'id_prets' => $idPret,
             'id_status_prets' => 1,
-            'date_mouvement' => date('Y-m-d')
+            'date_mouvement' => $data->date_debut
         ]);
 
         Fond::ajouterAvecDetails(
@@ -58,7 +56,6 @@ class PretController {
             $idPret
         );
 
-        // Mettre à jour le fonds
 
         Flight::json(['success' => true, 'id_pret' => $idPret]);
     }

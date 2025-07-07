@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../db.php';
 require_once __DIR__ . '/StatusPret.php';
+
 class Pret {
     // Récupérer tous les prêts
     public static function getAll() {
@@ -21,13 +22,17 @@ class Pret {
     // Créer un nouveau prêt
     public static function create($data) {
         $db = getDB();
-        $stmt = $db->prepare("INSERT INTO Prets (id_types_pret, id_clients, montant_prets, date_debut, duree_en_mois) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO Prets 
+            (id_types_pret, id_clients, montant_prets, date_debut, duree_en_mois, assurance, delai_grace)
+            VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([
             $data->id_types_pret,
             $data->id_clients,
             $data->montant_prets,
             $data->date_debut,
-            $data->duree_en_mois
+            $data->duree_en_mois,
+            isset($data->assurance) ? $data->assurance : 0.00,
+            isset($data->delai_grace) ? $data->delai_grace : 0
         ]);
         return $db->lastInsertId();
     }
@@ -35,13 +40,17 @@ class Pret {
     // Mettre à jour un prêt
     public static function update($id_prets, $data) {
         $db = getDB();
-        $stmt = $db->prepare("UPDATE Prets SET id_types_pret = ?, id_clients = ?, montant_prets = ?, date_debut = ?, duree_en_mois = ? WHERE id_prets = ?");
+        $stmt = $db->prepare("UPDATE Prets SET 
+            id_types_pret = ?, id_clients = ?, montant_prets = ?, date_debut = ?, duree_en_mois = ?, assurance = ?, delai_grace = ?
+            WHERE id_prets = ?");
         $stmt->execute([
             $data->id_types_pret,
             $data->id_clients,
             $data->montant_prets,
             $data->date_debut,
             $data->duree_en_mois,
+            isset($data->assurance) ? $data->assurance : 0.00,
+            isset($data->delai_grace) ? $data->delai_grace : 0,
             $id_prets
         ]);
     }
@@ -52,8 +61,6 @@ class Pret {
         $stmt = $db->prepare("DELETE FROM Prets WHERE id_prets = ?");
         $stmt->execute([$id_prets]);
     }
-
-
 
     public static function getAllPretsAvecTaux()
     {
@@ -83,7 +90,7 @@ class Pret {
 
         foreach ($tousPrets as $pret) {
             $statut = self::getDernierStatutPret($pret['id_prets']);
-            if (!$statut || !in_array($statut['nom_status'], ['Approuvé', 'En cours de remboursement'])) continue;
+            if (!$statut || !in_array($statut['nom_status'], ['Approuve', 'En cours de remboursement'])) continue;
 
             $interets = self::calculerInteretsMensuels(
                 $pret['montant_prets'],

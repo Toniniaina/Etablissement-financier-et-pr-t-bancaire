@@ -55,6 +55,12 @@
       <label for="dateDebut">Date début :</label>
       <input type="date" id="dateDebut" />
 
+      <label for="assurance">Assurance (% ou montant) :</label>
+      <input type="number" id="assurance" step="0.01" min="0" value="0.00" />
+
+      <label for="delaiGrace">Délai de grâce (mois) :</label>
+      <input type="number" id="delaiGrace" min="0" value="0" />
+
       <button onclick="ajouterPret()">Ajouter le prêt</button>
     </div>
 
@@ -109,8 +115,13 @@
         const montant = document.getElementById("montant").value;
         const duree = document.getElementById("duree").value;
         const dateDebut = document.getElementById("dateDebut").value;
+        const assurance = document.getElementById("assurance").value;
+        const delaiGrace = document.getElementById("delaiGrace").value;
 
-        const data = `id_clients=${client}&id_types_pret=${typePret}&montant_prets=${montant}&duree_en_mois=${duree}&date_debut=${dateDebut}`;
+        const data =
+          `id_clients=${client}&id_types_pret=${typePret}&montant_prets=${montant}` +
+          `&duree_en_mois=${duree}&date_debut=${dateDebut}` +
+          `&assurance=${assurance}&delai_grace=${delaiGrace}`;
 
         ajax("POST", "/prets", data, (res) => {
           alert("Prêt enregistré avec succès !");
