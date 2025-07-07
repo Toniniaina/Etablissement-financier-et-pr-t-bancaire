@@ -1,6 +1,5 @@
 <?php
-namespace Models;
-use PDO;
+
 require_once __DIR__ . '/../db.php';
 
 class Etudiant {
