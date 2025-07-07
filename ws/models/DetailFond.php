@@ -60,7 +60,6 @@ class DetailFond {
     public static function getFondActuelDetails() {
         $db = getDB();
     
-        // Dépôt : SUM(montant_fonds) pour les transactions dont le nom est 'Depot'
         $stmt = $db->prepare(
             "SELECT COALESCE(SUM(f.montant_fonds), 0) as depot
              FROM Details_fonds d
@@ -68,10 +67,9 @@ class DetailFond {
              JOIN Type_transactions tt ON d.id_type_transactions = tt.id_type_transactions
              WHERE tt.nom_type_transactions = ?"
         );
-        $stmt->execute(['Depot']); // ou 'Dépot', selon la valeur exacte dans ta base
+        $stmt->execute(['Depot']); 
         $depot = $stmt->fetch(PDO::FETCH_ASSOC)['depot'];
     
-        // Retrait : SUM(montant_fonds) pour les transactions dont le nom est 'Retrait'
         $stmt = $db->prepare(
             "SELECT COALESCE(SUM(f.montant_fonds), 0) as retrait
              FROM Details_fonds d
