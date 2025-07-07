@@ -3,7 +3,6 @@ require_once __DIR__ . '/../controllers/PretController.php';
 require_once __DIR__ . '/../controllers/ClientController.php';
 require_once __DIR__ . '/../controllers/PretController.php';
 require_once __DIR__ . '/../controllers/PretController.php';
-require_once __DIR__ . '/../controllers/EtudiantController.php';
 require_once __DIR__ . '/../controllers/FondController.php';
 require_once __DIR__ . '/../controllers/DetailFondController.php';
 
