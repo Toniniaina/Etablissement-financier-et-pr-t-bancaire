@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Échéancier de remboursement</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
+        input, button { margin: 5px; padding: 5px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #444; padding: 8px; text-align: center; }
+        th { background-color: #1f1f1f; }
+    </style>
+</head>
+<body>
+
+<h2>Recherche d’un client pour afficher l’échéancier de ses prêts</h2>
+
+<label for="recherche">Nom ou prénom client :</label>
+<input type="text" id="recherche">
+<button onclick="chercherClient()">Rechercher</button>
+
+<!-- Table des clients -->
+<table id="table-clients">
+    <thead>
+    <tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Table des prêts -->
+<h3>Prêts du client</h3>
+<table id="table-prets">
+    <thead>
+    <tr><th>ID</th><th>Montant</th><th>Date Début</th><th>Durée (mois)</th><th>Action</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Table échéancier -->
+<h3>Échéancier</h3>
+<table id="table-echeancier">
+    <thead>
+    <tr><th>Mois</th><th>Mensualité</th><th>Intérêt</th><th>Principal</th><th>Reste à payer</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    const base = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+
+    function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, base + url, true);
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        xhr.send(data);
+    }
+
+    function chercherClient() {
+        const nom = document.getElementById("recherche").value.toLowerCase();
+        ajax("GET", "/clients", null, (data) => {
+            const tbody = document.querySelector("#table-clients tbody");
+            tbody.innerHTML = "";
+            const resultats = data.filter(c =>
+                c.nom_clients.toLowerCase().includes(nom) || c.prenom_clients.toLowerCase().includes(nom)
+            );
+
+            resultats.forEach(client => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${client.id_clients}</td>
+                    <td>${client.nom_clients}</td>
+                    <td>${client.prenom_clients}</td>
+                    <td><button onclick="chargerPretsClient(${client.id_clients})">Voir prêts</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+    }
+
+    function chargerPretsClient(idClient) {
+        ajax("GET", "/prets", null, (data) => {
+            const prets = data.filter(p => p.id_clients == idClient);
+            const tbody = document.querySelector("#table-prets tbody");
+            tbody.innerHTML = "";
+            document.querySelector("#table-echeancier tbody").innerHTML = "";
+
+            prets.forEach(p => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+
+
+                    <td>${p.id_prets}</td>
+                    <td>${parseFloat(p.montant_prets).toLocaleString('fr-FR')}</td>
+                    <td>${p.date_debut}</td>
+                    <td>${p.duree_en_mois}</td>
+                    <td>
+  <button onclick="chargerEcheancier(${p.id_prets})">Échéancier</button>
+  <a href="http://localhost/Etablissement-financier-et-pr-t-bancaire/ws/export/export-pdf.php?id=${p.id_prets}" target="_blank">PDF</a>
+</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+    }
+
+    function chargerEcheancier(idPret) {
+        ajax("GET", `/prets/echeancier?id=${idPret}`, null, (data) => {
+            const tbody = document.querySelector("#table-echeancier tbody");
+            tbody.innerHTML = "";
+            data.forEach(e => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${e.mois}</td>
+                    <td>${e.mensualite.toLocaleString('fr-FR')}</td>
+                    <td>${e.interet.toLocaleString('fr-FR')}</td>
+                    <td>${e.principal.toLocaleString('fr-FR')}</td>
+                    <td>${e.reste.toLocaleString('fr-FR')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+    }
+</script>
+
+</body>
+</html>
