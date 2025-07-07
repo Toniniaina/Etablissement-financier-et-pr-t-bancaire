@@ -69,6 +69,22 @@ class Pret {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+
+    public static function getLastMvtPret($idPret)
+    {
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT * FROM Mouvement_prets
+            WHERE id_prets = ?
+            ORDER BY date_mouvement DESC
+            LIMIT 1
+        ");
+        $stmt->execute([$idPret]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
+    
     public static function getDernierStatutPret($idPret)
     {
         $db = getDB();
@@ -83,6 +99,21 @@ class Pret {
         return $row ? StatusPret::getById($row['id_status_prets']) : null;
     }
 
+    public static function getDateApprobation($idPret) {
+        $db = getDB();
+        $stmt = $db->prepare("
+            SELECT date_mouvement 
+            FROM Mouvement_prets mp
+            JOIN Status_prets s ON mp.id_status_prets = s.id_status_prets
+            WHERE mp.id_prets = ? AND s.nom_status = 'Approuve'
+            ORDER BY date_mouvement ASC
+            LIMIT 1
+        ");
+        $stmt->execute([$idPret]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['date_mouvement'] : null;
+    }
+
     public static function getInteretsParMois($moisDebut, $moisFin)
     {
         $tousPrets = self::getAllPretsAvecTaux();
@@ -92,11 +123,22 @@ class Pret {
             $statut = self::getDernierStatutPret($pret['id_prets']);
             if (!$statut || !in_array($statut['nom_status'], ['Approuve', 'En cours de remboursement'])) continue;
 
+            // Si délai de grâce > 0, chercher la date d'approbation (sinon date_debut)
+            $delaiGrace = isset($pret['delai_grace']) ? (int)$pret['delai_grace'] : 0;
+            $dateDebut = $pret['date_debut'];
+            if ($delaiGrace > 0) {
+                $dateApprobation = self::getDateApprobation($pret['id_prets']);
+                if ($dateApprobation) {
+                    $dateDebut = $dateApprobation;
+                }
+            }
+
             $interets = self::calculerInteretsMensuels(
                 $pret['montant_prets'],
                 $pret['pourcentage'],
                 $pret['duree_en_mois'],
-                $pret['date_debut']
+                $dateDebut,
+                $delaiGrace
             );
 
             foreach ($interets as $mois => $interet) {
@@ -115,8 +157,7 @@ class Pret {
         return $resultatFinal;
     }
 
-    public static function calculerInteretsMensuels($capital, $tauxAnnuel, $dureeMois, $dateDebut)
-    {
+    public static function calculerInteretsMensuels($capital, $tauxAnnuel, $dureeMois, $dateDebut, $delaiGrace = 0) {
         $mensualite = self::calculerMensualite($capital, $tauxAnnuel, $dureeMois);
         $interetsParMois = [];
         $reste = $capital;
@@ -124,15 +165,17 @@ class Pret {
         $mois = new DateTime($dateDebut);
 
         for ($i = 0; $i < $dureeMois; $i++) {
-            $interet = $reste * $tauxMensuel;
-            $amortissement = $mensualite - $interet;
-            $reste -= $amortissement;
-
-            $cle = $mois->format('Y-m');
-            $interetsParMois[$cle] = round($interet, 2);
+            if ($i < $delaiGrace) {
+                // Période de grâce : pas d'intérêt, pas d'amortissement
+                $interetsParMois[$mois->format('Y-m')] = 0.00;
+            } else {
+                $interet = $reste * $tauxMensuel;
+                $amortissement = $mensualite - $interet;
+                $reste -= $amortissement;
+                $interetsParMois[$mois->format('Y-m')] = round($interet, 2);
+            }
             $mois->modify('+1 month');
         }
-
         return $interetsParMois;
     }
 
