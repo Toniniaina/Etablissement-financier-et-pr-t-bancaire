@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/../controllers/EtudiantController.php';
 require_once __DIR__ . '/../controllers/PretController.php';
 
 Flight::route('GET /prets/interets', ['PretController', 'getInteretsParMois']);
