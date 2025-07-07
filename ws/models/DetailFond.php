@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../db.php';
 
-class DetailfFnd {
+class DetailFondd {
     public static function getAll() {
         $db = getDB();
         $stmt = $db->query("SELECT * FROM Details_fonds");

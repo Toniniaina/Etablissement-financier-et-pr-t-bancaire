@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ajouter un prêt</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      select,
+      input,
+      button {
+        margin-top: 5px;
+        padding: 8px;
+        width: 100%;
+        max-width: 400px;
+      }
+      table {
+        margin-top: 20px;
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Ajout d’un prêt client</h1>
+
+    <div>
+      <label for="client">Client :</label>
+      <select id="client"></select>
+
+      <label for="typePret">Type de prêt :</label>
+      <select id="typePret"></select>
+
+      <label for="montant">Montant :</label>
+      <input type="number" id="montant" step="0.01" />
+
+      <label for="duree">Durée (mois) :</label>
+      <input type="number" id="duree" />
+
+      <label for="dateDebut">Date début :</label>
+      <input type="date" id="dateDebut" />
+
+      <button onclick="ajouterPret()">Ajouter le prêt</button>
+    </div>
+
+    <script>
+      const apiBase = "http://localhost/banque/ws"; // adapte à ton projet
+
+      function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, apiBase + url, true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              callback(JSON.parse(xhr.responseText));
+            } else {
+              alert("Erreur : " + xhr.responseText);
+            }
+          }
+        };
+        xhr.send(data);
+      }
+
+      function chargerClientsEtTypes() {
+        ajax("GET", "/clients", null, (clients) => {
+          const selectClient = document.getElementById("client");
+          clients.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c.id_clients;
+            opt.textContent = c.nom_clients + " " + c.prenom_clients;
+            selectClient.appendChild(opt);
+          });
+        });
+
+        ajax("GET", "/typesprets", null, (types) => {
+          const selectType = document.getElementById("typePret");
+          types.forEach((t) => {
+            const opt = document.createElement("option");
+            opt.value = t.id_types_pret;
+            opt.textContent = t.nom_type_pret;
+            selectType.appendChild(opt);
+          });
+        });
+      }
+
+      function ajouterPret() {
+        const client = document.getElementById("client").value;
+        const typePret = document.getElementById("typePret").value;
+        const montant = document.getElementById("montant").value;
+        const duree = document.getElementById("duree").value;
+        const dateDebut = document.getElementById("dateDebut").value;
+
+        const data = `id_clients=${client}&id_types_pret=${typePret}&montant_prets=${montant}&duree_en_mois=${duree}&date_debut=${dateDebut}`;
+
+        ajax("POST", "/prets", data, (res) => {
+          alert("Prêt enregistré avec succès !");
+          // tu peux ici réinitialiser le formulaire ou rediriger
+        });
+      }
+
+      chargerClientsEtTypes();
+    </script>
+  </body>
+</html>
