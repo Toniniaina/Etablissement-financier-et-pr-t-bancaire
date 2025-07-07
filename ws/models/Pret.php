@@ -83,7 +83,7 @@ class Pret {
 
         foreach ($tousPrets as $pret) {
             $statut = self::getDernierStatutPret($pret['id_prets']);
-            if (!$statut || !in_array($statut['nom_status'], ['Approuvé', 'En cours de remboursement'])) continue;
+            if (!$statut || !in_array($statut['nom_status'], ['Approuve', 'En cours de remboursement'])) continue;
 
             $interets = self::calculerInteretsMensuels(
                 $pret['montant_prets'],
@@ -134,4 +134,56 @@ class Pret {
         $t = $tauxAnnuel / 12 / 100;
         return $capital * $t / (1 - pow(1 + $t, -$dureeMois));
     }
+    public static function getEcheancier($idPret)
+    {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT p.*, t.pourcentage FROM Prets p JOIN Taux t ON p.id_types_pret = t.id_types_pret WHERE p.id_prets = ?");
+        $stmt->execute([$idPret]);
+        $pret = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$pret) return [];
+
+        $capital = $pret['montant_prets'];
+        $tauxAnnuel = $pret['pourcentage'];
+        $dureeMois = $pret['duree_en_mois'];
+        $dateDebut = $pret['date_debut'];
+
+        $mensualite = self::calculerMensualite($capital, $tauxAnnuel, $dureeMois);
+        $tauxMensuel = $tauxAnnuel / 12 / 100;
+        $reste = $capital;
+
+        $mois = new DateTime($dateDebut);
+        $echeancier = [];
+
+        for ($i = 0; $i < $dureeMois; $i++) {
+            $interet = round($reste * $tauxMensuel, 2);
+            $principal = round($mensualite - $interet, 2);
+            $reste = round($reste - $principal, 2);
+            $echeancier[] = [
+                'mois' => $mois->format('Y-m'),
+                'mensualite' => round($mensualite, 2),
+                'interet' => $interet,
+                'principal' => $principal,
+                'reste' => max($reste, 0)
+            ];
+            $mois->modify('+1 month');
+        }
+
+        return $echeancier;
+    }
+    public static function getDateDebutReelle($idPret) {
+        $db = getDB();
+        $stmt = $db->prepare("
+        SELECT mp.date_mouvement
+        FROM Mouvement_prets mp
+        JOIN Status_prets sp ON mp.id_status_prets = sp.id_status_prets
+        WHERE mp.id_prets = ? AND sp.nom_status = 'Approuve'
+        ORDER BY mp.date_mouvement ASC
+        LIMIT 1
+    ");
+        $stmt->execute([$idPret]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['date_mouvement'] : null;
+    }
+
+
 }

@@ -62,4 +62,15 @@ class PretController {
 
         Flight::json(['success' => true, 'id_pret' => $idPret]);
     }
+    public static function getEcheancierByPret()
+    {
+        $id = Flight::request()->query['id'];
+        if (!$id) {
+            Flight::json(['error' => 'ID requis'], 400);
+            return;
+        }
+        $result = Pret::getEcheancier($id);
+        Flight::json($result);
+    }
+
 }
