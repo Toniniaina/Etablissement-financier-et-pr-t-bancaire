@@ -68,3 +68,8 @@ CREATE TABLE Details_fonds(
     FOREIGN KEY (id_fonds) REFERENCES Fonds(id_fonds),
     FOREIGN KEY (id_prets) REFERENCES Prets(id_prets)
 );
+
+
+
+ALTER TABLE Prets ADD assurance DECIMAL(5,2) DEFAULT 0.00;
+ALTER TABLE Prets ADD delai_grace INT DEFAULT 0;
