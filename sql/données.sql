@@ -25,14 +25,6 @@ INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
                                                                             (1, 2, '2025-01-12'),  -- Approuvé
                                                                             (1, 4, '2025-02-01');  -- En cours
 
--- Prêt 2 (Mickael) : Approuvé puis en cours
-INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
-                                                                            (2, 2, '2025-02-07'),
-                                                                            (2, 4, '2025-03-01');
-
--- Prêt 3 (Fanja) : En attente, pas encore approuvé
-INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES
-    (3, 1, '2025-03-03');
 INSERT INTO Type_transactions (nom_type_transactions) VALUES
                                                           ('Depot'),
                                                           ('Retrait');
