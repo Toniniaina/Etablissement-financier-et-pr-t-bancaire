@@ -72,4 +72,9 @@ CREATE TABLE Details_fonds(
 
 
 ALTER TABLE Prets ADD assurance DECIMAL(5,2) DEFAULT 0.00;
+    
+);
+
+
+ALTER TABLE Prets ADD assurance DECIMAL(5,2) DEFAULT 0;
 ALTER TABLE Prets ADD delai_grace INT DEFAULT 0;

@@ -40,4 +40,72 @@ class Fond {
         $stmt = $db->prepare("DELETE FROM Fonds WHERE id_fonds = ?");
         $stmt->execute([$id_fonds]);
     }
+
+    
+    public static function getFondActuelJusque($dateLimite) {
+        $db = getDB();
+    
+        // Total des dépôts jusqu'à une date donnée
+        $stmt = $db->prepare(
+            "SELECT COALESCE(SUM(f.montant_fonds), 0) as depot
+             FROM Details_fonds d
+             JOIN Fonds f ON d.id_fonds = f.id_fonds
+             JOIN Type_transactions tt ON d.id_type_transactions = tt.id_type_transactions
+             WHERE tt.nom_type_transactions = ? AND d.date_details <= ?"
+        );
+        $stmt->execute(['Depot', $dateLimite]); 
+        $depot = $stmt->fetch(PDO::FETCH_ASSOC)['depot'];
+    
+        // Total des retraits jusqu'à une date donnée
+        $stmt = $db->prepare(
+            "SELECT COALESCE(SUM(f.montant_fonds), 0) as retrait
+             FROM Details_fonds d
+             JOIN Fonds f ON d.id_fonds = f.id_fonds
+             JOIN Type_transactions tt ON d.id_type_transactions = tt.id_type_transactions
+             WHERE tt.nom_type_transactions != ? AND d.date_details <= ?"
+        );
+        $stmt->execute(['retrait', $dateLimite]);
+        $retrait = $stmt->fetch(PDO::FETCH_ASSOC)['retrait'];
+    
+        return [
+            'total_depot' => $depot,
+            'total_retrait' => $retrait,
+            'fond_actuel' => $depot - $retrait
+        ];
+    }
+    
+
+        public static function ajouterAvecDetails($montant, $date, $id_pret = null) {
+            $db = getDB();
+    
+            // 1. Insérer dans Fonds
+            $stmtFonds = $db->prepare("INSERT INTO Fonds (montant_fonds) VALUES (?)");
+            $stmtFonds->execute([$montant]);
+            $idFonds = $db->lastInsertId();
+    
+            // 2. Récupérer id_type_transactions pour "Prélèvement prêt"
+            $stmtType = $db->prepare("SELECT id_type_transactions FROM Type_transactions WHERE LOWER(nom_type_transactions) = LOWER(?)");
+            $stmtType->execute(['Retrait']);
+            $idTypeTransaction = $stmtType->fetchColumn();
+    
+            if (!$idTypeTransaction) {
+                Flight::halt(500, "Type de transaction 'Retrait' introuvable");
+            }
+    
+            // 3. Insérer dans Details_fonds
+            $stmtDetails = $db->prepare("
+                INSERT INTO Details_fonds (id_fonds, id_type_transactions, date_details, id_prets)
+                VALUES (?, ?, ?, ?)
+            ");
+            $stmtDetails->execute([
+                $idFonds,
+                $idTypeTransaction,
+                $date,
+                $id_pret
+            ]);
+    
+            return $idFonds;
+        }
+
+    
 }
