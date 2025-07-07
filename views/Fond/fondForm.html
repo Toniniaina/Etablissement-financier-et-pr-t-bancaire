@@ -1,11 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h2>Tonga e </h2>
-</body>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gestion des Fonds</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      input,
+      button {
+        margin: 5px;
+        padding: 5px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .form-section {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gestion des Fonds</h1>
+
+    <div class="form-section">
+      <input type="hidden" id="id_fonds" />
+      <input
+        type="number"
+        id="montant_fonds"
+        placeholder="Montant du fonds"
+        step="0.01"
+        min="0"
+      />
+      <input type="date" id="date_details" placeholder="Date du détail" />
+      <button onclick="ajouterOuModifierFonds()">
+        Ajouter / Modifier Fonds
+      </button>
+    </div>
+
+    <div
+      id="fond-actuel"
+      style="font-size: 1.2em; margin-bottom: 20px; color: #1a6d1a"
+    >
+      Fond actuel : <span id="valeur-fond-actuel">Chargement...</span> Ar
+    </div>
+
+    <h2>Liste des Fonds</h2>
+    <table id="table-fonds">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Montant</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <a href="../../index.html">Retour à l'accueil</a>
+
+    <script>
+      const apiBase =
+        "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+
+      function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, apiBase + url, true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(JSON.parse(xhr.responseText));
+          }
+        };
+        xhr.send(data);
+      }
+
+      function afficherFondActuel() {
+        ajax("GET", "/fond_actuel", null, (data) => {
+          let valeur =
+            data.fond_actuel !== undefined
+              ? data.fond_actuel
+              : data.total_depot !== undefined &&
+                data.total_retrait !== undefined
+              ? data.total_depot - data.total_retrait
+              : "Erreur";
+          document.getElementById("valeur-fond-actuel").textContent = valeur;
+        });
+      }
+
+      // FONDS CRUD
+
+      function chargerFonds() {
+        ajax("GET", "/fonds", null, (data) => {
+          console.log(data);
+          const tbody = document.querySelector("#table-fonds tbody");
+          tbody.innerHTML = "";
+          if (Array.isArray(data)) {
+            data.forEach((f) => {
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+                    <td>${f.id_fonds}</td>
+                    <td>${f.montant_fonds}</td>
+                    <td>
+                      <button onclick='remplirFormulaireFonds(${JSON.stringify(
+                        f
+                      )})'>✏️</button>
+                      <button onclick='supprimerFonds(${
+                        f.id_fonds
+                      })'>🗑️</button>
+                    </td>
+                  `;
+              tbody.appendChild(tr);
+            });
+          } else {
+            tbody.innerHTML =
+              "<tr><td colspan='3'>Aucun fonds trouvé</td></tr>";
+          }
+        });
+      }
+      function ajouterOuModifierFonds() {
+        const id = document.getElementById("id_fonds").value;
+        const montant = document.getElementById("montant_fonds").value;
+        const date_details = document.getElementById("date_details").value;
+      
+        const data = `montant_fonds=${encodeURIComponent(montant)}&date_details=${encodeURIComponent(date_details)}`;
+        if (id) {
+          ajax("PUT", `/fonds/${id}`, data, () => {
+            resetFormFonds();
+            chargerFonds();
+            afficherFondActuel();
+          });
+        } else {
+          ajax("POST", "/fonds", data, () => {
+            resetFormFonds();
+            chargerFonds();
+            afficherFondActuel();
+          });
+        }
+      }
+
+      function remplirFormulaireFonds(f) {
+        document.getElementById("id_fonds").value = f.id_fonds;
+        document.getElementById("montant_fonds").value = f.montant_fonds;
+      }
+
+      function supprimerFonds(id) {
+        if (confirm("Supprimer ce fonds ?")) {
+          ajax("DELETE", `/fonds/${id}`, null, () => {
+            chargerFonds();
+          });
+        }
+      }
+
+      function resetFormFonds() {
+        document.getElementById("id_fonds").value = "";
+        document.getElementById("montant_fonds").value = "";
+        document.getElementById("date_details").value = "";
+      }
+
+      // Initialisation
+      chargerFonds();
+      afficherFondActuel();
+    </script>
+  </body>
 </html>
