@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/../db.php';
-
-class Status_prets {
+class StatusPret {
     // Récupérer tous les statuts de prêts
     public static function getAll() {
         $db = getDB();

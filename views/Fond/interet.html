@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Intérêts Gagnés par Mois</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input, button { margin: 5px; padding: 5px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        canvas { margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+<h1>Intérêts Gagnés par Mois</h1>
+
+<div>
+    <label for="debut">Mois/Année début :</label>
+    <input type="month" id="debut">
+    <label for="fin">Mois/Année fin :</label>
+    <input type="month" id="fin">
+    <button onclick="chargerInterets()">Filtrer</button>
+</div>
+
+<table id="table-interets">
+    <thead>
+    <tr><th>Mois</th><th>Intérêts Totaux (Ar)</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<canvas id="interetsChart" width="800" height="400"></canvas>
+
+<script>
+    const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+    let chart;
+
+    function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, apiBase + url, true);
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                callback(JSON.parse(xhr.responseText));
+            }
+        };
+        xhr.send(data);
+    }
+
+    function chargerInterets() {
+        const debut = document.getElementById("debut").value;
+        const fin = document.getElementById("fin").value;
+
+        if (!debut || !fin) {
+            alert("Veuillez sélectionner les dates de début et de fin.");
+            return;
+        }
+
+        ajax("GET", `/prets/interets?debut=${debut}&fin=${fin}`, null, (data) => {
+            const tbody = document.querySelector("#table-interets tbody");
+            tbody.innerHTML = "";
+
+            const labels = [];
+            const values = [];
+
+            data.forEach(i => {
+                labels.push(i.mois_annee);
+                values.push(i.interets_totaux);
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${i.mois_annee}</td>
+          <td>${i.interets_totaux.toLocaleString('fr-FR', {minimumFractionDigits: 2})}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+
+            afficherGraphique(labels, values);
+        });
+    }
+
+    function afficherGraphique(labels, data) {
+        const ctx = document.getElementById('interetsChart').getContext('2d');
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'bar', // tu peux changer en 'line' si tu veux une courbe
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Intérêts Totaux (Ar)',
+                    data: data,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('fr-FR') + ' Ar';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
