@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simulation de prêt</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        margin: 10px 0;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Simuler un prêt</h1>
+
+    <label for="type">Type de prêt</label>
+    <select id="type" onchange="calculer()"></select>
+
+    <label for="montant">Montant à emprunter (Ar)</label>
+    <input type="number" id="montant" oninput="calculer()" />
+
+    <label for="duree">Durée en mois</label>
+    <input type="number" id="duree" oninput="calculer()" />
+
+    <div class="result" id="resultat" style="display: none"></div>
+
+    <script>
+      const apiBase =
+        "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+      let tauxPret = [];
+
+      function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, apiBase + url, true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(JSON.parse(xhr.responseText));
+          }
+        };
+        xhr.send(data);
+      }
+
+      function chargerTaux() {
+        ajax("GET", "/taux", null, (data) => {
+          tauxPret = data;
+          const select = document.getElementById("type");
+          data.forEach((t) => {
+            const opt = document.createElement("option");
+            opt.value = t.id_types_pret;
+            opt.textContent = `${t.nom_type_pret} (${t.pourcentage}%/an)`;
+            select.appendChild(opt);
+          });
+        });
+      }
+
+      function calculer() {
+  const montant = parseFloat(document.getElementById("montant").value);
+  const duree = parseInt(document.getElementById("duree").value);
+  const idType = parseInt(document.getElementById("type").value);
+
+  if (!montant || !duree || !idType) {
+    document.getElementById("resultat").style.display = "none";
+    return;
+  }
+
+  const type = tauxPret.find(t => t.id_types_pret == idType);
+  if (!type) return;
+
+  const tauxAnnuel = parseFloat(type.pourcentage);
+  const tauxMensuel = tauxAnnuel / 12 / 100; // taux en décimal
+
+  // Formule d’amortissement constant (facile pour simulation simple)
+  const totalInteret = montant * tauxMensuel * duree;
+  const total = montant + totalInteret;
+  const mensualite = total / duree;
+
+  document.getElementById("resultat").style.display = "block";
+  document.getElementById("resultat").innerHTML = `
+    <strong>Montant demandé :</strong> ${montant.toLocaleString()} Ar<br>
+    <strong>Durée :</strong> ${duree} mois<br>
+    <strong>Taux annuel :</strong> ${tauxAnnuel}%<br>
+    <strong>Taux mensuel :</strong> ${(tauxMensuel * 100).toFixed(3)}%<br>
+    <strong>Intérêt total :</strong> ${totalInteret.toFixed(2).toLocaleString()} Ar<br>
+    <strong>Montant total à rembourser :</strong> ${total.toFixed(2).toLocaleString()} Ar<br>
+    <strong>Mensualité estimée :</strong> ${mensualite.toFixed(2).toLocaleString()} Ar/mois
+  `;
+}
+
+      chargerTaux();
+    </script>
+  </body>
+</html>

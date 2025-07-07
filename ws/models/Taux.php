@@ -47,4 +47,14 @@ class Taux {
         $stmt = $db->prepare("DELETE FROM Taux WHERE id_taux = ?");
         $stmt->execute([$id_taux]);
     }
+
+    public static function getWithType() {
+        $db = getDB();
+        $stmt = $db->query("
+            SELECT t.id_types_pret, tp.nom_type_pret, t.pourcentage
+            FROM Taux t
+            JOIN Types_pret tp ON t.id_types_pret = tp.id_types_pret
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

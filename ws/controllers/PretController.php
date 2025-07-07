@@ -128,5 +128,24 @@ class PretController {
         Flight::json(['success' => true]);
     }
     
+ 
+    
+        // --- Vérification du plafond d'emprunt basé sur le salaire (commentée pour l'instant) ---
+        /*
+        $db = getDB();
+        $stmtSalaire = $db->prepare("SELECT salaire FROM Clients WHERE id_clients = ?");
+        $stmtSalaire->execute([$data->id_clients]);
+        $salaire = $stmtSalaire->fetchColumn();
+    
+        if ($salaire !== false && $salaire !== null) {
+            $plafond = $salaire * 10;
+            if ($data->montant_prets > $plafond) {
+                Flight::halt(400, "Le montant demandé dépasse 10 fois le salaire mensuel autorisé.");
+            }
+        } else {
+            Flight::halt(400, "Salaire du client introuvable.");
+        }
+        */
+        // -------------------------------------------------------------------------------------------
     
 }
