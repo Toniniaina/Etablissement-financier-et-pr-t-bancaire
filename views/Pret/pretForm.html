@@ -182,25 +182,21 @@
     <!-- JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
-      const apiBase =
-        "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
-
-<!-- JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script>
-   const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
-
-
-  function ajax(method, url, data, callback) {
-    const xhr = new XMLHttpRequest();
-    xhr.open(method, apiBase + url, true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) callback(JSON.parse(xhr.responseText));
-        else alert("Erreur : " + xhr.responseText);
+      const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+    
+      function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, apiBase + url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) callback(JSON.parse(xhr.responseText));
+            else alert("Erreur : " + xhr.responseText);
+          }
+        };
+        xhr.send(data);
       }
-
+    
       function chargerClientsEtTypes() {
         ajax("GET", "/clients", null, (clients) => {
           const selectClient = document.getElementById("client");
@@ -211,7 +207,7 @@
             selectClient.appendChild(opt);
           });
         });
-
+    
         ajax("GET", "/typesprets", null, (types) => {
           const selectType = document.getElementById("typePret");
           types.forEach((t) => {
@@ -222,7 +218,7 @@
           });
         });
       }
-
+    
       function ajouterPret() {
         const client = document.getElementById("client").value;
         const typePret = document.getElementById("typePret").value;
@@ -231,22 +227,22 @@
         const dateDebut = document.getElementById("dateDebut").value;
         const assurance = document.getElementById("assurance").value;
         const delaiGrace = document.getElementById("delaiGrace").value;
-
+    
         const data =
           `id_clients=${client}&id_types_pret=${typePret}&montant_prets=${montant}` +
           `&duree_en_mois=${duree}&date_debut=${dateDebut}` +
           `&assurance=${assurance}&delai_grace=${delaiGrace}`;
-
+    
         ajax("POST", "/prets", data, () => {
           alert("Prêt enregistré avec succès !");
         });
       }
-
+    
       // Initialisation
       document.addEventListener("DOMContentLoaded", () => {
         chargerClientsEtTypes();
       });
-
+    
       // Sidebar responsive
       document
         .getElementById("sidebarToggle")
@@ -257,5 +253,6 @@
             .classList.toggle("sidebar-collapsed");
         });
     </script>
+    
   </body>
 </html>

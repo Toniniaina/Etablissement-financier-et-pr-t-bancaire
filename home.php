@@ -54,7 +54,7 @@
                 </a>
             </div>
             <div class="nav-item">
-          <a href="../Fond/fondStat.html" class="nav-link"
+          <a href="views/Fond/fondStat.html" class="nav-link"
             ><i class="fas fa-coins"></i><span>Statistiques des Fonds</span></a
           >
         </div>
@@ -223,7 +223,7 @@
         }
 
         // Votre logique JavaScript existante
-         const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
+        const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
 
         function ajax(method, url, data, callback) {
             const xhr = new XMLHttpRequest();
