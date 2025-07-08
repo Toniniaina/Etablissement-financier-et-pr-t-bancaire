@@ -115,7 +115,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-striped" id="table-echeancier">
                     <thead>
-                    <tr><th>Mois</th><th>Mensualité</th><th>Intérêt</th><th>Principal</th><th>Reste à payer</th><th>Assurance</th></tr>
+                    <tr><th>Mois</th><th>Mensualité</th><th>Intérêt</th><th>Principal</th><th>Assurance</th><th>Reste à payer</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
@@ -125,11 +125,12 @@
 </main>
 
 <script>
-    const base = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+     const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
+
 
     function ajax(method, url, data, callback) {
         const xhr = new XMLHttpRequest();
-        xhr.open(method, base + url, true);
+        xhr.open(method, apiBase + url, true);
         xhr.onreadystatechange = () => {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 callback(JSON.parse(xhr.responseText));
@@ -175,7 +176,7 @@
                     <button class="btn btn-sm btn-success me-1" onclick="chargerEcheancier(${p.id_prets})">
                       <i class="fas fa-calendar-alt"></i> Échéancier
                     </button>
-                    <a href="${base}/export/export-pdf.php?id=${p.id_prets}" target="_blank" class="btn btn-sm btn-outline-danger">
+                    <a href="${apiBase}/export/export-pdf.php?id=${p.id_prets}" target="_blank" class="btn btn-sm btn-outline-danger">
                       <i class="fas fa-file-pdf"></i> PDF
                     </a>
                   </td>
@@ -196,8 +197,8 @@
                   <td>${e.mensualite.toLocaleString('fr-FR')} Ar</td>
                   <td>${e.interet.toLocaleString('fr-FR')} Ar</td>
                   <td>${e.principal.toLocaleString('fr-FR')} Ar</td>
-                  <td>${e.reste.toLocaleString('fr-FR')} Ar</td>
                   <td>${e.assurance.toLocaleString('fr-FR')} Ar</td>
+                  <td>${e.reste.toLocaleString('fr-FR')} Ar</td>
                 `;
                 tbody.appendChild(tr);
             });

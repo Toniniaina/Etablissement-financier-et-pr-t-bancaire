@@ -67,11 +67,11 @@
   <form onsubmit="return seConnecter(event)">
     <div class="mb-3">
       <label for="email" class="form-label">Adresse email</label>
-      <input type="email" id="email" class="form-control" required autocomplete="username"/>
+      <input type="email" id="email" class="form-control" value="admin@gmail.com" required autocomplete="username"/>
     </div>
     <div class="mb-3">
       <label for="password" class="form-label">Mot de passe</label>
-      <input type="password" id="password" class="form-control" required autocomplete="current-password"/>
+      <input type="password" id="password" class="form-control" value="123" required autocomplete="current-password"/>
     </div>
     <button type="submit" class="btn btn-login text-white">Se connecter</button>
   </form>
@@ -82,7 +82,8 @@
 </div>
 
 <script>
-  const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+   const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
+
 
   function ajax(method, url, data, callback) {
     const xhr = new XMLHttpRequest();

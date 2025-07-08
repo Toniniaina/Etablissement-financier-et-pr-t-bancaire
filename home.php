@@ -218,7 +218,7 @@
         }
 
         // Votre logique JavaScript existante
-        const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+         const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
 
         function ajax(method, url, data, callback) {
             const xhr = new XMLHttpRequest();

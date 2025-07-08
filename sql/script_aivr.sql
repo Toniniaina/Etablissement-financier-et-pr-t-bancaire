@@ -102,7 +102,8 @@ CREATE TABLE simulations (
     interet_total NUMERIC(15, 2) NOT NULL,
     montant_total NUMERIC(15, 2) NOT NULL,
     mensualite NUMERIC(15, 2) NOT NULL,
-    FOREIGN KEY (id_types_pret)  REFERENCES types_pret(id_types_pret)
+    id_types_pret INT NOT NULL,
+    FOREIGN KEY (id_types_pret)  REFERENCES Types_pret(id_types_pret)
 );
 
 
