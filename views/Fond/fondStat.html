@@ -49,7 +49,7 @@
       </div>
       <div class="nav-menu">
         <div class="nav-item">
-          <a href="fondStat.html" class="nav-link"
+          <a href="fondStat.html" class="nav-link active"
             ><i class="fas fa-coins"></i><span>Statistiques des Fonds</span></a
           >
         </div>
@@ -69,7 +69,7 @@
           >
         </div>
         <div class="nav-item">
-          <a href="../Pret/liste.html" class="nav-link active"
+          <a href="../Pret/liste.html" class="nav-link"
             ><i class="fas fa-list"></i><span>Liste des Prêts</span></a
           >
         </div>
@@ -103,14 +103,37 @@
         </div>
 
         <!-- Filtres -->
+        <!-- ... HEAD identique ... -->
         <div class="row g-3 align-items-end mb-4 fade-in">
           <div class="col-md-3">
-            <label class="form-label">Mois début</label>
-            <input type="month" id="moisDebut" class="form-control" />
+            <label class="form-label">Mois</label>
+            <select id="moisSelect" class="form-select">
+              <option value="">Tous</option>
+              <option value="01">Janvier</option>
+              <option value="02">Février</option>
+              <option value="03">Mars</option>
+              <option value="04">Avril</option>
+              <option value="05">Mai</option>
+              <option value="06">Juin</option>
+              <option value="07">Juillet</option>
+              <option value="08">Août</option>
+              <option value="09">Septembre</option>
+              <option value="10">Octobre</option>
+              <option value="11">Novembre</option>
+              <option value="12">Décembre</option>
+            </select>
           </div>
           <div class="col-md-3">
-            <label class="form-label">Annee</label>
-            <input type="month" id="moisFin" class="form-control" />
+            <label class="form-label">Année</label>
+            <select id="anneeSelect" class="form-select">
+              <option value="">Toutes</option>
+              <script>
+                const currentYear = new Date().getFullYear();
+                for (let y = currentYear; y >= 2020; y--) {
+                  document.write(`<option value="${y}">${y}</option>`);
+                }
+              </script>
+            </select>
           </div>
           <div class="col-md-3 d-grid">
             <button class="btn btn-primary" onclick="chargerFondsMensuels()">
@@ -158,16 +181,28 @@
       }
 
       function chargerFondsMensuels() {
-        const debut = document.getElementById("moisDebut").value;
-        const fin = document.getElementById("moisFin").value;
+        const mois = document.getElementById("moisSelect").value;
+        const annee = document.getElementById("anneeSelect").value;
+        let moisDebut = "";
+        let moisFin = "";
+
+        if (mois && annee) {
+          moisDebut = `${annee}-${mois}`;
+          moisFin = moisDebut;
+        }
 
         ajax(
           "POST",
           "/fond/stats",
-          `mois_debut=${debut}&mois_fin=${fin}`,
+          `mois_debut=${moisDebut}&mois_fin=${moisFin}`,
           (data) => {
             const tbody = document.getElementById("table-stats");
             tbody.innerHTML = "";
+
+            if (!data || data.length === 0) {
+              tbody.innerHTML = `<tr><td colspan="4" class="text-center">Aucune donnée</td></tr>`;
+              return;
+            }
 
             data.forEach((ligne) => {
               const tr = document.createElement("tr");

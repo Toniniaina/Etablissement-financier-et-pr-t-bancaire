@@ -47,22 +47,27 @@ class FondController {
     }
 
     public static function fondsParMois()
-    {
-        $moisDebut = $_POST['mois_debut'] ?? '';
-        $moisFin = $_POST['mois_fin'] ?? '';
+{
+    $moisDebut = $_POST['mois_debut'] ?? '';
+    $moisFin = $_POST['mois_fin'] ?? '';
 
-        try {
-            if (!$moisDebut || !$moisFin) {
-                // Pas de filtre -> tous les mois
-                $result = Fond::getFondsParMois(null, null);
-                Flight::json($result);
-            } elseif ($moisDebut === $moisFin) {
-                // Un seul mois
-                $result = Fond::getFondsPourUnMois($moisDebut);
-                Flight::json([$result]);
-            }
-        } catch (Exception $e) {
-            Flight::json(['error' => $e->getMessage()], 500);
+    try {
+        if (!$moisDebut || !$moisFin) {
+            // Si aucun mois ou année sélectionnés → on récupère tout
+            $result = Fond::getFondsParMois(null, null);
+            Flight::json($result);
+        } elseif ($moisDebut === $moisFin) {
+            // Même mois et même année → un seul mois à afficher
+            $result = Fond::getFondsPourUnMois($moisDebut);
+            Flight::json([$result]);
+        } else {
+            // Cas peu probable ici (pas géré dans le formulaire actuel)
+            $result = Fond::getFondsParMois($moisDebut, $moisFin);
+            Flight::json($result);
         }
+    } catch (Exception $e) {
+        Flight::json(['error' => $e->getMessage()], 500);
     }
+}
+
 }
