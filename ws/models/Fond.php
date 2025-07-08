@@ -62,7 +62,7 @@ class Fond {
              FROM Details_fonds d
              JOIN Fonds f ON d.id_fonds = f.id_fonds
              JOIN Type_transactions tt ON d.id_type_transactions = tt.id_type_transactions
-             WHERE tt.nom_type_transactions != ? AND d.date_details <= ?"
+             WHERE tt.nom_type_transactions = ? AND d.date_details <= ?"
         );
         $stmt->execute(['retrait', $dateLimite]);
         $retrait = $stmt->fetch(PDO::FETCH_ASSOC)['retrait'];
