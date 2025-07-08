@@ -47,25 +47,25 @@ class Fond {
     
         // Total des dépôts jusqu'à une date donnée
         $stmt = $db->prepare(
-            "SELECT COALESCE(SUM(f.montant_fonds), 0) as depot
+            "SELECT COALESCE(SUM(f.montant_fonds), 0) as Depot
              FROM Details_fonds d
              JOIN Fonds f ON d.id_fonds = f.id_fonds
              JOIN Type_transactions tt ON d.id_type_transactions = tt.id_type_transactions
-             WHERE tt.nom_type_transactions = ? AND d.date_details <= ?"
+             WHERE tt.nom_type_transactions = 'Depot' AND d.date_details <= ?"
         );
-        $stmt->execute(['Depot', $dateLimite]); 
-        $depot = $stmt->fetch(PDO::FETCH_ASSOC)['depot'];
+        $stmt->execute([$dateLimite]); 
+        $depot = $stmt->fetch(PDO::FETCH_ASSOC)['Depot'];
     
         // Total des retraits jusqu'à une date donnée
         $stmt = $db->prepare(
-            "SELECT COALESCE(SUM(f.montant_fonds), 0) as retrait
+            "SELECT COALESCE(SUM(f.montant_fonds), 0) as Retrait
              FROM Details_fonds d
              JOIN Fonds f ON d.id_fonds = f.id_fonds
              JOIN Type_transactions tt ON d.id_type_transactions = tt.id_type_transactions
-             WHERE tt.nom_type_transactions != ? AND d.date_details <= ?"
+             WHERE tt.nom_type_transactions = 'Retrait' AND d.date_details <= ?"
         );
-        $stmt->execute(['retrait', $dateLimite]);
-        $retrait = $stmt->fetch(PDO::FETCH_ASSOC)['retrait'];
+        $stmt->execute([$dateLimite]);
+        $retrait = $stmt->fetch(PDO::FETCH_ASSOC)['Retrait'];
     
         return [
             'total_depot' => $depot,
@@ -73,7 +73,6 @@ class Fond {
             'fond_actuel' => $depot - $retrait
         ];
     }
-    
 
         public static function ajouterAvecDetails($montant, $date, $id_pret = null) {
             $db = getDB();
