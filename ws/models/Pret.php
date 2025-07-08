@@ -116,14 +116,17 @@ class Pret {
 
         foreach ($tousPrets as $pret) {
             $statut = self::getDernierStatutPret($pret['id_prets']);
-            if (!$statut || !in_array($statut['nom_status'], ['approuve', 'En cours de remboursement'])) continue;
+            if (!$statut || !in_array(strtolower($statut['nom_status']), ['approuve', 'en cours de remboursement'])) continue;
+
             $delaiGrace = isset($pret['delai_grace']) ? (int)$pret['delai_grace'] : 0;
+
+            // Par défaut, dateDebut = date_debut du prêt
             $dateDebut = $pret['date_debut'];
-            if ($delaiGrace > 0) {
-                $dateApprobation = self::getDateApprobation($pret['id_prets']);
-                if ($dateApprobation) {
-                    $dateDebut = $dateApprobation;
-                }
+            $dateApprobation = self::getDateApprobation($pret['id_prets']);
+            if ($dateApprobation) {
+                $dateDebutObj = new DateTime($dateApprobation);
+                $dateDebutObj->modify('+1 month');
+                $dateDebut = $dateDebutObj->format('Y-m-d');
             }
 
             $interets = self::calculerInteretsMensuels(
@@ -149,6 +152,7 @@ class Pret {
         }
         return $resultatFinal;
     }
+
 
     public static function calculerInteretsMensuels($capital, $tauxAnnuel, $dureeMois, $dateDebut, $delaiGrace = 0) {
         $mensualite = self::calculerMensualite($capital, $tauxAnnuel, $dureeMois);
@@ -236,27 +240,29 @@ class Pret {
         $capital = $pret['montant_prets'];
         $tauxAnnuel = $pret['pourcentage'];
         $dureeMois = $pret['duree_en_mois'];
-        $delaiGrace = $pret['delai_grace'];
-        $dateDebut = $pret['date_debut'];
+        $delaiGrace = (int)$pret['delai_grace'];
         $assurance = $pret['assurance'];
         $nbMensualites = max(1, $dureeMois - $delaiGrace);
 
-        $assuranceParmois = self::calculerAssurance($assurance, $capital, $nbMensualites);
+        // 👉 Obtenir la date d'approbation (réelle)
+        $dateApprobationStr = self::getDateDebutReelle($idPret);
+        if (!$dateApprobationStr) return [];
 
+        $dateApprobation = new DateTime($dateApprobationStr);
 
-        // Cas limite : si delai >= durée -> 1 remboursement global
-        $nbMensualites = max(1, $dureeMois - $delaiGrace);
+        // 👉 Calculer la date réelle de début de remboursement : mois suivant l’approbation
+        $dateDebutRemboursement = clone $dateApprobation;
+        $dateDebutRemboursement->modify('+1 month');
+        $dateDebutRemboursement->modify("+$delaiGrace month");
 
         $mensualites = self::calculerMensualite($capital, $tauxAnnuel, $nbMensualites);
+        $assuranceParmois = self::calculerAssurance($assurance, $capital, $nbMensualites);
         $mensualite = $mensualites + $assuranceParmois;
         $tauxMensuel = $tauxAnnuel / 12 / 100;
         $reste = $capital;
 
-        $mois = new DateTime($dateDebut);
+        $mois = new DateTime($dateDebutRemboursement->format('Y-m-01'));
         $echeancier = [];
-
-        // Décaler la date de début après le délai de grâce
-        $mois->modify("+$delaiGrace month");
 
         for ($i = 0; $i < $nbMensualites; $i++) {
             $interet = round($reste * $tauxMensuel, 2);
@@ -275,6 +281,7 @@ class Pret {
 
         return $echeancier;
     }
+
 
     public static function getDateDebutReelle($idPret) {
         $db = getDB();

@@ -8,6 +8,18 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../scss/style.scss" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        #table-interets {
+            table-layout: fixed;
+            word-wrap: break-word;
+            width: 100%;
+        }
+        #interetsChart {
+            width: 100% !important;
+            height: 400px !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -75,19 +87,25 @@
             </div>
         </div>
 
-        <div class="table-responsive fade-in">
-            <table class="table table-bordered table-striped" id="table-interets">
-                <thead class="table-light">
-                <tr>
-                    <th>Mois</th>
-                    <th>Intérêts Totaux (Ar)</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div class="row fade-in">
+            <div class="col-md-6">
+                <div class="table-responsive" style="max-height: 400px; overflow-y:auto;">
+                    <table class="table table-bordered table-striped" id="table-interets">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Mois</th>
+                            <th>Intérêts Totaux (Ar)</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-center justify-content-center">
+                <canvas id="interetsChart"></canvas>
+            </div>
         </div>
 
-        <canvas id="interetsChart" height="100" class="mt-5"></canvas>
     </div>
 </main>
 
@@ -107,8 +125,8 @@
     }
 
     function chargerInterets() {
-        const debut = document.getElementById("debut").value;
-        const fin = document.getElementById("fin").value;
+        const debut = document.getElementById("debut").value; // format YYYY-MM
+        const fin = document.getElementById("fin").value;     // format YYYY-MM
 
         if (!debut || !fin) {
             alert("Veuillez sélectionner les dates de début et de fin.");
@@ -119,18 +137,53 @@
             const tbody = document.querySelector("#table-interets tbody");
             tbody.innerHTML = "";
 
-            const labels = [];
-            const values = [];
+            let labels = [];
+            let values = [];
 
+            // Calcul des années et mois sélectionnés
+            const [anneeDebut, moisDebut] = debut.split('-').map(Number);
+            const [anneeFin, moisFin] = fin.split('-').map(Number);
+
+            if (anneeDebut === anneeFin) {
+                for (let m = 1; m <= 12; m++) {
+                    const mm = m < 10 ? "0"+m : m;
+                    labels.push(`${anneeDebut}-${mm}`);
+                }
+            } else {
+                let currentYear = anneeDebut;
+                let currentMonth = moisDebut;
+
+                while (currentYear < anneeFin || (currentYear === anneeFin && currentMonth <= moisFin)) {
+                    const mm = currentMonth < 10 ? "0"+currentMonth : currentMonth;
+                    labels.push(`${currentYear}-${mm}`);
+
+                    currentMonth++;
+                    if (currentMonth > 12) {
+                        currentMonth = 1;
+                        currentYear++;
+                    }
+                }
+            }
+
+            // Construire un objet pour récupérer facilement les intérêts par mois
+            const interetsMap = {};
             data.forEach(i => {
-                labels.push(i.mois_annee);
-                values.push(i.interets_totaux);
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-          <td>${i.mois_annee}</td>
-          <td>${i.interets_totaux.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>
-        `;
-                tbody.appendChild(tr);
+                interetsMap[i.mois_annee] = i.interets_totaux;
+            });
+
+            labels.forEach(label => {
+                const val = interetsMap[label] || 0;
+                values.push(val);
+
+                // N'affiche au tableau que si valeur > 0
+                if(val > 0){
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td>${label}</td>
+                        <td>${val.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
             });
 
             afficherGraphique(labels, values);
@@ -153,6 +206,7 @@
                 }]
             },
             options: {
+                maintainAspectRatio: false,
                 responsive: true,
                 scales: {
                     y: {
