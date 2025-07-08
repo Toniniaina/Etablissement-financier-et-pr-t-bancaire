@@ -51,6 +51,7 @@ $pdf->Cell(30, 10, utf8_decode('Mois'), 1);
 $pdf->Cell(40, 10, utf8_decode('Mensualité'), 1);
 $pdf->Cell(30, 10, utf8_decode('Intérêt'), 1);
 $pdf->Cell(40, 10, utf8_decode('Principal'), 1);
+$pdf->Cell(30, 10, utf8_decode('Assurance'), 1);
 $pdf->Cell(40, 10, utf8_decode('Reste à payer'), 1);
 $pdf->Ln();
 
@@ -61,6 +62,7 @@ foreach ($echeancier as $ligne) {
     $pdf->Cell(40, 10, number_format($ligne['mensualite'], 2, ',', ' '), 1);
     $pdf->Cell(30, 10, number_format($ligne['interet'], 2, ',', ' '), 1);
     $pdf->Cell(40, 10, number_format($ligne['principal'], 2, ',', ' '), 1);
+    $pdf->Cell(30, 10, number_format($ligne['assurance'], 2, ',', ' '), 1);
     $pdf->Cell(40, 10, number_format($ligne['reste'], 2, ',', ' '), 1);
     $pdf->Ln();
 }

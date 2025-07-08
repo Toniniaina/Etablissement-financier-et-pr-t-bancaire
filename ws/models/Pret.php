@@ -166,7 +166,6 @@ class Pret {
 
         for ($i = 0; $i < $dureeMois; $i++) {
             if ($i < $delaiGrace) {
-                // Période de grâce : pas d'intérêt, pas d'amortissement
                 $interetsParMois[$mois->format('Y-m')] = 0.00;
             } else {
                 $interet = $reste * $tauxMensuel;
@@ -245,8 +244,11 @@ class Pret {
         $tauxAnnuel = $pret['pourcentage'];
         $dureeMois = $pret['duree_en_mois'];
         $dateDebut = $pret['date_debut'];
+        $assurance = $pret['assurance'];
+        $assuranceParmois=self::calculerAssurance($assurance,$capital);
 
-        $mensualite = self::calculerMensualite($capital, $tauxAnnuel, $dureeMois);
+        $mensualites = self::calculerMensualite($capital, $tauxAnnuel, $dureeMois);
+        $mensualite=$mensualites+$assuranceParmois;
         $tauxMensuel = $tauxAnnuel / 12 / 100;
         $reste = $capital;
 
@@ -255,14 +257,15 @@ class Pret {
 
         for ($i = 0; $i < $dureeMois; $i++) {
             $interet = round($reste * $tauxMensuel, 2);
-            $principal = round($mensualite - $interet, 2);
+            $principal = round($mensualite - $interet-$assuranceParmois, 2);
             $reste = round($reste - $principal, 2);
             $echeancier[] = [
                 'mois' => $mois->format('Y-m'),
                 'mensualite' => round($mensualite, 2),
                 'interet' => $interet,
                 'principal' => $principal,
-                'reste' => max($reste, 0)
+                'reste' => max($reste, 0),
+                'assurance'=>$assuranceParmois
             ];
             $mois->modify('+1 month');
         }
@@ -282,6 +285,11 @@ class Pret {
         $stmt->execute([$idPret]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['date_mouvement'] : null;
+    }
+    public static function calculerAssurance($assurance, $capital) {
+        $valeur = $assurance*$capital/100;
+        $assuranceParmois=$valeur/12;
+        return $assuranceParmois;
     }
 
 
