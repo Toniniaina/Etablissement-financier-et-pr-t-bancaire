@@ -7,6 +7,10 @@ require_once __DIR__ . '/../controllers/FondController.php';
 require_once __DIR__ . '/../controllers/DetailFondController.php';
 require_once __DIR__ . '/../controllers/TauxController.php';
 
+require_once __DIR__ . '/controllers/UtilisateurController.php';
+
+Flight::route('POST /login', ['UtilisateurController', 'login']);
+
 require_once __DIR__ . '/../controllers/ClientController.php';
 Flight::route('GET /prets/interets', ['PretController', 'getInteretsParMois']);
 Flight::route('GET /clients', ['ClientController', 'getAll']);
