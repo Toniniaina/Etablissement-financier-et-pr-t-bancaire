@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Connexion - FinanceBank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-container {
+      background: #1f1f1f;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .form-control {
+      background-color: #2b2b2b;
+      border: 1px solid #444;
+      color: white;
+    }
+
+    .form-control:focus {
+      background-color: #2b2b2b;
+      border-color: #007bff;
+      color: white;
+      box-shadow: none;
+    }
+
+    .btn-login {
+      width: 100%;
+      background-color: #007bff;
+      border: none;
+    }
+
+    .btn-login:hover {
+      background-color: #0056b3;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+    }
+
+    .login-footer i {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-title"><i class="fas fa-university me-2"></i>FinanceBank</div>
+  
+  <form onsubmit="return seConnecter(event)">
+    <div class="mb-3">
+      <label for="username" class="form-label">Nom d'utilisateur</label>
+      <input type="text" id="username" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Mot de passe</label>
+      <input type="password" id="password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-login text-white">Se connecter</button>
+  </form>
+
+  <div class="login-footer">
+    <i class="fas fa-lock me-1"></i>Accès sécurisé
+  </div>
+</div>
+
+<script>
+  function seConnecter(e) {
+    e.preventDefault();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    // Exemple de vérification locale simple
+    if (username === "admin" && password === "admin123") {
+      alert("Connexion réussie !");
+      window.location.href = "dashboard.html"; // ou redirection vers ta page d'accueil
+    } else {
+      alert("Nom d'utilisateur ou mot de passe incorrect !");
+    }
+
+    // En prod : appeler ton web service ici (POST vers /login)
+  }
+</script>
+
+</body>
+</html>
