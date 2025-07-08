@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../scss/style.scss" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
         #table-interets {
             table-layout: fixed;
@@ -19,11 +18,16 @@
             width: 100% !important;
             height: 400px !important;
         }
+        .card-blanche {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            height: 100%;
+        }
     </style>
 </head>
 <body>
-
-<!-- Header -->
 <header class="header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
@@ -39,7 +43,6 @@
     </div>
 </header>
 
-<!-- Sidebar -->
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <h5>Menu Principal</h5>
@@ -64,7 +67,6 @@
     </div>
 </nav>
 
-<!-- Main -->
 <main class="main-content" id="mainContent">
     <div class="content-wrapper">
         <div class="page-header">
@@ -87,25 +89,28 @@
             </div>
         </div>
 
-        <div class="row fade-in">
+        <div class="row fade-in g-4">
             <div class="col-md-6">
-                <div class="table-responsive" style="max-height: 400px; overflow-y:auto;">
-                    <table class="table table-bordered table-striped" id="table-interets">
-                        <thead class="table-light">
-                        <tr>
-                            <th>Mois</th>
-                            <th>Intérêts Totaux (Ar)</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="card-blanche">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y:auto;">
+                        <table class="table table-bordered table-striped" id="table-interets">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Mois</th>
+                                <th>Intérêts Totaux (Ar)</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6 d-flex align-items-center justify-content-center">
-                <canvas id="interetsChart"></canvas>
+            <div class="col-md-6">
+                <div class="card-blanche d-flex align-items-center justify-content-center">
+                    <canvas id="interetsChart"></canvas>
+                </div>
             </div>
         </div>
-
     </div>
 </main>
 
@@ -125,8 +130,8 @@
     }
 
     function chargerInterets() {
-        const debut = document.getElementById("debut").value; // format YYYY-MM
-        const fin = document.getElementById("fin").value;     // format YYYY-MM
+        const debut = document.getElementById("debut").value;
+        const fin = document.getElementById("fin").value;
 
         if (!debut || !fin) {
             alert("Veuillez sélectionner les dates de début et de fin.");
@@ -140,7 +145,6 @@
             let labels = [];
             let values = [];
 
-            // Calcul des années et mois sélectionnés
             const [anneeDebut, moisDebut] = debut.split('-').map(Number);
             const [anneeFin, moisFin] = fin.split('-').map(Number);
 
@@ -152,11 +156,9 @@
             } else {
                 let currentYear = anneeDebut;
                 let currentMonth = moisDebut;
-
                 while (currentYear < anneeFin || (currentYear === anneeFin && currentMonth <= moisFin)) {
                     const mm = currentMonth < 10 ? "0"+currentMonth : currentMonth;
                     labels.push(`${currentYear}-${mm}`);
-
                     currentMonth++;
                     if (currentMonth > 12) {
                         currentMonth = 1;
@@ -165,7 +167,6 @@
                 }
             }
 
-            // Construire un objet pour récupérer facilement les intérêts par mois
             const interetsMap = {};
             data.forEach(i => {
                 interetsMap[i.mois_annee] = i.interets_totaux;
@@ -174,14 +175,9 @@
             labels.forEach(label => {
                 const val = interetsMap[label] || 0;
                 values.push(val);
-
-                // N'affiche au tableau que si valeur > 0
                 if(val > 0){
                     const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td>${label}</td>
-                        <td>${val.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>
-                    `;
+                    tr.innerHTML = `<td>${label}</td><td>${val.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>`;
                     tbody.appendChild(tr);
                 }
             });
