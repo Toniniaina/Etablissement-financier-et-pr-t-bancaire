@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Connexion - FinanceBank</title>
+  <title>Inscription - FinanceBank</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
@@ -64,19 +64,27 @@
 <div class="login-container">
   <div class="login-title"><i class="fas fa-university me-2"></i>FinanceBank</div>
   
-  <form onsubmit="return seConnecter(event)">
+  <form onsubmit="return inscrire(event)">
+    <div class="mb-3">
+      <label for="nom" class="form-label">Nom</label>
+      <input type="text" id="nom" class="form-control" required />
+    </div>
+    <div class="mb-3">
+      <label for="prenom" class="form-label">Prénom</label>
+      <input type="text" id="prenom" class="form-control" required />
+    </div>
     <div class="mb-3">
       <label for="email" class="form-label">Adresse email</label>
       <input type="email" id="email" class="form-control" required autocomplete="username"/>
     </div>
     <div class="mb-3">
       <label for="password" class="form-label">Mot de passe</label>
-      <input type="password" id="password" class="form-control" required autocomplete="current-password"/>
+      <input type="password" id="password" class="form-control" required autocomplete="new-password"/>
     </div>
-    <button type="submit" class="btn btn-login text-white">Se connecter</button>
+    <button type="submit" class="btn btn-login text-white">S'inscrire</button>
   </form>
   <div class="login-footer">
-    <i class="fas fa-lock me-1"></i>Accès sécurisé
+    <i class="fas fa-lock me-1"></i>Vos données sont sécurisées
   </div>
 </div>
 
@@ -99,19 +107,24 @@
     xhr.send(data);
   }
 
-  function seConnecter(e) {
+  function inscrire(e) {
     e.preventDefault();
+    const nom = document.getElementById("nom").value.trim();
+    const prenom = document.getElementById("prenom").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    const data = "email=" + encodeURIComponent(email) + "&mot_de_passe=" + encodeURIComponent(password);
+    const data = "nom_utilisateurs=" + encodeURIComponent(nom)
+      + "&prenom_utilisateurs=" + encodeURIComponent(prenom)
+      + "&email=" + encodeURIComponent(email)
+      + "&mot_de_passe=" + encodeURIComponent(password);
 
-    ajax("POST", "/login", data, function(response) {
+    ajax("POST", "/register", data, function(response) {
       if (response.success) {
-        alert("Connexion réussie !");
-        window.location.href = "dashboard.html";
+        alert("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        window.location.href = "index.html";
       } else {
-        alert(response.message || "Email ou mot de passe incorrect !");
+        alert(response.message || "Erreur lors de l'inscription !");
       }
     });
   }
