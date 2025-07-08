@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Comparaison de Simulations de Prêt</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="../../scss/style.scss"/>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #ecf0f1;
+            --dark-bg: #34495e;
+            --text-color: #2c3e50;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --transition-speed: 0.3s;
+        }
+
+        .custom-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%) !important;
+            color: white !important;
+            height: var(--header-height) !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1000 !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+            padding: 0 2rem !important;
+        }
+
+        .custom-sidebar {
+            position: fixed !important;
+            top: var(--header-height) !important;
+            left: 0 !important;
+            width: var(--sidebar-width) !important;
+            height: calc(100vh - var(--header-height)) !important;
+            background: white !important;
+            border-right: 1px solid #dee2e6 !important;
+            overflow-y: auto !important;
+            z-index: 999 !important;
+            transition: transform var(--transition-speed) ease !important;
+        }
+        .custom-sidebar.collapsed {
+            transform: translateX(-100%) !important;
+        }
+        .custom-sidebar .nav-link {
+            color: var(--text-color) !important;
+            padding: 12px 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            transition: all var(--transition-speed) ease !important;
+            border-left: 3px solid transparent !important;
+        }
+        .custom-sidebar .nav-link:hover, .custom-sidebar .nav-link.active {
+            background-color: rgba(52, 152, 219, 0.1) !important;
+            border-left-color: var(--secondary-color) !important;
+            color: var(--secondary-color) !important;
+        }
+        .custom-main-content {
+            margin-left: var(--sidebar-width) !important;
+            margin-top: var(--header-height) !important;
+            min-height: calc(100vh - var(--header-height)) !important;
+            transition: margin-left var(--transition-speed) ease !important;
+        }
+        .custom-main-content.sidebar-collapsed {
+            margin-left: 0 !important;
+        }
+        .simulations-container {
+            display: flex !important;
+            gap: 2rem !important;
+            flex-wrap: wrap !important;
+            background-color: var(--light-bg) !important;
+            padding: 1.5rem !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .sim-list, .sim-form {
+            flex: 1 !important;
+            min-width: 300px !important;
+            background: white !important;
+            border-radius: 12px !important;
+            padding: 1.5rem !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .sim-list-header, .sim-form-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%) !important;
+            color: white !important;
+            padding: 1rem !important;
+            border-radius: 12px 12px 0 0 !important;
+            font-size: 1.125rem !important;
+            font-weight: 600 !important;
+        }
+        .custom-radio {
+            width: 1.25rem !important;
+            height: 1.25rem !important;
+            accent-color: var(--secondary-color) !important;
+        }
+        .custom-input, .custom-select {
+            width: 100% !important;
+            padding: 0.75rem !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 8px !important;
+            font-size: 0.95rem !important;
+            color: var(--text-color) !important;
+            transition: all var(--transition-speed) ease !important;
+        }
+        .custom-input:focus, .custom-select:focus {
+            border-color: var(--secondary-color) !important;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
+        }
+        .custom-button {
+            background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%) !important;
+            color: white !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all var(--transition-speed) ease !important;
+        }
+        .custom-button:hover {
+            background: linear-gradient(135deg, #229954 0%, #27ae60 100%) !important;
+            transform: translateY(-1px) !important;
+        }
+        .cancel-button {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #c0392b 100%) !important;
+            color: white !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all var(--transition-speed) ease !important;
+        }
+        .cancel-button:hover {
+            background: linear-gradient(135deg, #a93226 0%, #992d22 100%) !important;
+            transform: translateY(-1px) !important;
+        }
+        .validate-button {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #3498db 100%) !important;
+            color: white !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all var(--transition-speed) ease !important;
+        }
+        .validate-button:hover {
+            background: linear-gradient(135deg, #2a7eb1 0%, #2980b9 100%) !important;
+            transform: translateY(-1px) !important;
+        }
+        .results-container {
+            margin-top: 2rem !important;
+            display: flex !important;
+            gap: 2rem !important;
+            flex-wrap: nowrap !important;
+            justify-content: space-between !important;
+        }
+        .simulation-result, .compare-result {
+            width: 50% !important;
+            max-width: 800px !important;
+            background: white !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .simulation-result.hidden, .compare-result.hidden {
+            display: none !important;
+        }
+        .result-card {
+            flex: 1 !important;
+            min-width: 0 !important;
+            background: white !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05) !important;
+        }
+        .compare-result > .result-card {
+            margin-bottom: 1rem !important;
+        }
+        .modal {
+            display: none !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            z-index: 2000 !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        .modal.show {
+            display: flex !important;
+        }
+        .modal-content {
+            background: white !important;
+            border-radius: 12px !important;
+            padding: 1.5rem !important;
+            max-width: 500px !important;
+            width: 100% !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-bg) 100%) !important;
+            color: white !important;
+            padding: 1rem !important;
+            border-radius: 12px 12px 0 0 !important;
+            font-size: 1.125rem !important;
+            font-weight: 600 !important;
+            margin: -1.5rem -1.5rem 1rem -1.5rem !important;
+        }
+        @media (max-width: 900px) {
+            .simulations-container, .results-container {
+                flex-direction: column !important;
+                flex-wrap: wrap !important;
+            }
+            .simulation-result, .compare-result {
+                width: 100% !important;
+                max-width: none !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .custom-sidebar {
+                transform: translateX(-100%) !important;
+            }
+            .custom-sidebar.show {
+                transform: translateX(0) !important;
+            }
+            .custom-main-content {
+                margin-left: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+<!-- Header -->
+<header class="custom-header flex items-center justify-between">
+    <div class="flex items-center">
+        <button class="sidebar-toggle text-white text-xl" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+        <div class="logo ml-3 flex items-center text-white">
+            <i class="fas fa-university text-2xl mr-2"></i>
+            <span class="text-xl font-bold">FinanceBank</span>
+        </div>
+    </div>
+    <div class="header-actions flex gap-4">
+        <button class="bg-transparent border border-white text-white px-3 py-1 rounded-full hover:bg-gray-700"><i class="fas fa-user mr-1"></i> Profil</button>
+        <button class="bg-transparent border border-white text-white px-3 py-1 rounded-full hover:bg-gray-700"><i class="fas fa-sign-out-alt mr-1"></i> Déconnexion</button>
+    </div>
+</header>
+
+<!-- Sidebar -->
+<nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h5>Menu Principal</h5>
+        <div class="sidebar-subtitle">Gestion Financière</div>
+    </div>
+    <div class="nav-menu">
+        <div class="nav-item"><a href="../../home.php" class="nav-link"><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a></div>
+        <div class="nav-item"><a href="simulation.html" class="nav-link"><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a></div>
+        <div class="nav-item"><a href="pretForm.html" class="nav-link"><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a></div>
+        <div class="nav-item"><a href="liste.html" class="nav-link"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
+        <div class="nav-item"><a href="echeancier.html" class="nav-link "><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
+        <div class="nav-item"><a href="interet.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
+        <div class="nav-item"><a href="simulationCompare.html" class="nav-link active"><i class="fas fa-balance-scale mr-3"></i><span>Comparer Simulation</span></a></div>
+
+
+    </div>
+    <div class="sidebar-footer">
+        <div class="user-info">
+            <div class="avatar"><i class="fas fa-user"></i></div>
+            <div class="user-details">
+                <div class="user-name">Admin</div>
+                <div class="user-role">Gestionnaire</div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="custom-main-content p-8">
+    <div class="content-wrapper">
+        <div class="page-header mb-6">
+            <h1 class="text-3xl font-bold text-[var(--primary-color)] flex items-center">
+                <i class="fas fa-balance-scale mr-3"></i>Comparaison de Simulations de Prêt
+            </h1>
+            <nav aria-label="breadcrumb">
+                <ol class="flex space-x-2 text-gray-600">
+                    <li><a href="#" class="hover:text-[var(--secondary-color)]">Accueil</a></li>
+                    <li class="text-gray-400">/</li>
+                    <li class="text-[var(--secondary-color)]">Comparaison de Simulations</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Simulations Container -->
+        <div class="simulations-container">
+            <!-- Formulaire dynamique -->
+            <div class="sim-form">
+                <div class="sim-form-header">
+                    <strong>Nouvelle Simulation</strong>
+                </div>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <label for="montant" class="input-label">Montant à emprunter</label>
+                        <input type="number" class="custom-input" id="montant" placeholder="Ex: 1 000 000" min="1000"/>
+                    </div>
+                    <div class="mb-4">
+                        <label for="duree" class="input-label">Durée (en mois)</label>
+                        <input type="number" class="custom-input" id="duree" placeholder="Ex: 12" min="1"/>
+                    </div>
+                    <div class="mb-4">
+                        <label for="type" class="input-label">Type de prêt</label>
+                        <select class="custom-select" id="type"></select>
+                    </div>
+                    <button class="custom-button" onclick="calculerSimulation()">
+                        <i class="fas fa-calculator mr-2"></i>Calculer
+                    </button>
+                    <button class="custom-button mt-4" onclick="sauvegarderSimulation()">
+                        <i class="fas fa-save mr-2"></i>Sauvegarder
+                    </button>
+                </div>
+            </div>
+            <!-- Liste des simulations -->
+            <div class="sim-list">
+                <div class="sim-list-header">
+                    <strong>Liste des Simulations</strong>
+                </div>
+                <div class="p-4">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-[var(--primary-color)] text-white text-sm">
+                                <th class="p-3 text-left"></th>
+                                <th class="p-3 text-left">ID</th>
+                                <th class="p-3 text-left">Montant</th>
+                                <th class="p-3 text-left">Durée</th>
+                                <th class="p-3 text-left">Type</th>
+                                <th class="p-3 text-left">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="simulations-table" class="text-[var(--text-color)]"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Résultats Container -->
+        <div class="results-container">
+            <div id="resultat" class="simulation-result hidden">
+                <div style="background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%) !important; color: white; padding: 1rem; border-radius: 12px 12px 0 0; font-weight: 600;">
+                    Simulation Dynamique
+                </div>
+                <div class="p-4" id="resultat-content"></div>
+            </div>
+            <div id="compare-result" class="compare-result hidden"></div>
+        </div>
+
+        <!-- Modal pour valider le prêt -->
+        <div class="modal" id="modalPret">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <strong>Valider la simulation en tant que prêt</strong>
+                </div>
+                <div class="p-4">
+                    <div class="mb-4">
+                        <label for="client" class="input-label">Client</label>
+                        <select class="custom-select" id="client">
+                            <option value="">Sélectionner un client</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="assurance" class="input-label">Assurance (%)</label>
+                        <input type="number" class="custom-input" id="assurance" placeholder="Ex: 1.5" min="0" step="0.01"/>
+                    </div>
+                    <div class="mb-4">
+                        <label for="delai_grace" class="input-label">Délai de grâce (mois)</label>
+                        <input type="number" class="custom-input" id="delai_grace" placeholder="Ex: 0" min="0" value="0"/>
+                    </div>
+                    <div class="mb-4">
+                        <label for="date_debut" class="input-label">Date de début</label>
+                        <input type="date" class="custom-input" id="date_debut"/>
+                    </div>
+                    <div class="flex gap-4">
+                        <button class="custom-button" onclick="validerPret()">
+                            <i class="fas fa-check mr-2"></i>Valider Pret
+                        </button>
+                        <button class="cancel-button" onclick="fermerModalPret()">
+                            <i class="fas fa-times mr-2"></i>Annuler
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+    let tauxPret = [];
+    let clients = [];
+    let selectedSimulations = [];
+    let derniereSimulation = null;
+    let simulationSelectionnee = null;
+
+    function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, apiBase + url, true);
+        if (method !== "GET") {
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        }
+        xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    try {
+                        callback(JSON.parse(xhr.responseText));
+                    } catch (e) {
+                        console.error("Erreur de parsing JSON :", e, "Réponse brute :", xhr.responseText);
+                        callback({ success: false, error: "Erreur de parsing de la réponse" });
+                    }
+                } else {
+                    console.error(`Erreur ${xhr.status} lors de la requête ${method} ${url}`, xhr.responseText);
+                    callback({ success: false, error: xhr.statusText || "Erreur serveur", details: xhr.responseText });
+                }
+            }
+        };
+        xhr.send(data);
+    }
+
+    function chargerTaux(callback) {
+        ajax("GET", "/taux", null, (data) => {
+            if (!data.success && data.error) {
+                alert("Erreur lors du chargement des taux : " + data.error);
+                return;
+            }
+            tauxPret = data;
+            const select = document.getElementById("type");
+            select.innerHTML = '';
+            data.forEach((t) => {
+                const opt = document.createElement("option");
+                opt.value = t.id_types_pret;
+                opt.textContent = `${t.nom_type_pret} (${t.pourcentage}%/an)`;
+                select.appendChild(opt);
+            });
+            if (callback) callback();
+        });
+    }
+
+    function chargerClients() {
+        ajax("GET", "/clients", null, (data) => {
+            if (!data.success && data.error) {
+                alert("Erreur lors du chargement des clients : " + data.error);
+                document.getElementById("client").innerHTML = '<option value="">Aucun client disponible</option>';
+                return;
+            }
+            clients = Array.isArray(data) ? data : [];
+            const select = document.getElementById("client");
+            select.innerHTML = '<option value="">Sélectionner un client</option>';
+            if (clients.length === 0) {
+                select.innerHTML = '<option value="">Aucun client disponible</option>';
+                return;
+            }
+            clients.forEach((c) => {
+                const opt = document.createElement("option");
+                opt.value = c.id_clients;
+                opt.textContent = `${c.nom} ${c.prenom || ''} (ID: ${c.id_clients})`.trim();
+                select.appendChild(opt);
+            });
+        });
+    }
+
+    function chargerSimulations() {
+        ajax("GET", "/simulations", null, (data) => {
+            console.log('Données simulations :', data);
+            const tbody = document.getElementById("simulations-table");
+            tbody.innerHTML = '';
+            if (!data || !Array.isArray(data)) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center">Aucune simulation trouvée</td></tr>';
+                return;
+            }
+            data.forEach((sim) => {
+                const type = tauxPret.find(t => t.id_types_pret == sim.id_types_pret);
+                const duree = sim.duree_mois != null && sim.duree_mois !== '' ? `${sim.duree_mois} mois` : 'Non défini';
+                const typeName = type ? type.nom_type_pret : 'Non défini';
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="p-3 border-t border-gray-200">
+                        <input type="radio" name="simulation" class="custom-radio" onchange="selectSimulation(${sim.id_simulation})">
+                    </td>
+                    <td class="p-3 border-t border-gray-200">${sim.id_simulation || 'N/A'}</td>
+                    <td class="p-3 border-t border-gray-200">${parseFloat(sim.montant).toLocaleString()} Ar</td>
+                    <td class="p-3 border-t border-gray-200">${duree}</td>
+                    <td class="p-3 border-t border-gray-200">${typeName}</td>
+                    <td class="p-3 border-t border-gray-200">
+                        <button class="validate-button" onclick="afficherModalPret(${sim.id_simulation})">
+                            <i class="fas fa-check-circle mr-2"></i>Valider Pret
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
+    }
+
+    function selectSimulation(id) {
+        selectedSimulations = [id];
+        afficherDetailsSimulations();
+    }
+
+    function afficherDetailsSimulations() {
+        const resultContainer = document.getElementById("compare-result");
+        resultContainer.innerHTML = '';
+        if (selectedSimulations.length === 0) {
+            resultContainer.classList.add("hidden");
+            return;
+        }
+        resultContainer.classList.remove("hidden");
+
+        ajax("GET", "/simulations", null, (data) => {
+            if (!data.success && data.error) {
+                alert("Erreur lors du chargement des simulations : " + data.error);
+                return;
+            }
+            const sim = data.find(s => s.id_simulation == selectedSimulations[0]);
+            if (!sim) return;
+            const type = tauxPret.find(t => t.id_types_pret == sim.id_types_pret);
+            const div = document.createElement("div");
+            div.className = "result-card";
+            div.innerHTML = `
+                <div style="background: linear-gradient(135deg, var(--secondary-color) 0%, #3498db 100%) !important; color: white; padding: 1rem; border-radius: 12px 12px 0 0; font-weight: 600;">
+                    Simulation Sélectionnée
+                </div>
+                <div class="p-4">
+                    <strong>Montant demandé :</strong> ${parseFloat(sim.montant).toLocaleString()} Ar<br>
+                    <strong>Durée :</strong> ${sim.duree_mois != null ? sim.duree_mois + ' mois' : 'Non défini'}<br>
+                    <strong>Taux annuel :</strong> ${sim.taux_annuel || 'Non défini'}%<br>
+                    <strong>Intérêt total :</strong> ${parseFloat(sim.interet_total).toLocaleString() || 'Non défini'} Ar<br>
+                    <strong>Montant total :</strong> ${parseFloat(sim.montant_total).toLocaleString() || 'Non défini'} Ar<br>
+                    <strong>Mensualité :</strong> ${parseFloat(sim.mensualite).toLocaleString() || 'Non défini'} Ar/mois<br>
+                    <strong>Type :</strong> ${type ? type.nom_type_pret : 'Non défini'}
+                </div>
+            `;
+            resultContainer.appendChild(div);
+        });
+    }
+
+    function calculerSimulation() {
+        const montant = parseFloat(document.getElementById("montant").value);
+        const duree_mois = parseInt(document.getElementById("duree").value);
+        const idType = parseInt(document.getElementById("type").value);
+
+        if (!montant || !duree_mois || !idType) {
+            document.getElementById("resultat").classList.add("hidden");
+            alert("Veuillez remplir tous les champs obligatoires.");
+            return;
+        }
+
+        const type = tauxPret.find(t => t.id_types_pret == idType);
+        if (!type) {
+            document.getElementById("resultat").classList.remove("hidden");
+            document.getElementById("resultat").innerHTML = `
+                <div style="background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%) !important; color: white; padding: 1rem; border-radius: 12px 12px 0 0; font-weight: 600;">
+                    Simulation Dynamique
+                </div>
+                <div class="p-4">Erreur : Type de prêt non trouvé</div>
+            `;
+            return;
+        }
+
+        const tauxAnnuel = parseFloat(type.pourcentage);
+        const tauxMensuel = tauxAnnuel / 12 / 100;
+        const totalInteret = montant * tauxMensuel * duree_mois;
+        const total = montant + totalInteret;
+        const mensualite = total / duree_mois;
+
+        document.getElementById("resultat").classList.remove("hidden");
+        document.getElementById("resultat").innerHTML = `
+            <div style="background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%) !important; color: white; padding: 1rem; border-radius: 12px 12px 0 0; font-weight: 600;">
+                Simulation Dynamique
+            </div>
+            <div class="p-4" id="resultat-content">
+                <strong>Montant demandé :</strong> ${montant.toLocaleString()} Ar<br>
+                <strong>Durée :</strong> ${duree_mois} mois<br>
+                <strong>Taux annuel :</strong> ${tauxAnnuel}%<br>
+                <strong>Taux mensuel :</strong> ${(tauxMensuel * 100).toFixed(3)}%<br>
+                <strong>Intérêt total :</strong> ${totalInteret.toFixed(2).toLocaleString()} Ar<br>
+                <strong>Montant total à rembourser :</strong> ${total.toFixed(2).toLocaleString()} Ar<br>
+                <strong>Mensualité estimée :</strong> ${mensualite.toFixed(2).toLocaleString()} Ar/mois
+            </div>
+        `;
+
+        derniereSimulation = {
+            montant: montant,
+            duree_mois: duree_mois,
+            taux_annuel: tauxAnnuel,
+            interet_total: totalInteret.toFixed(2),
+            montant_total: total.toFixed(2),
+            mensualite: mensualite.toFixed(2),
+            id_types_pret: idType
+        };
+    }
+
+    function sauvegarderSimulation() {
+        if (!derniereSimulation) {
+            alert("Veuillez d'abord effectuer une simulation.");
+            return;
+        }
+
+        const data =
+            "montant=" + encodeURIComponent(derniereSimulation.montant) +
+            "&duree=" + encodeURIComponent(derniereSimulation.duree_mois) +
+            "&taux_annuel=" + encodeURIComponent(derniereSimulation.taux_annuel) +
+            "&interet_total=" + encodeURIComponent(derniereSimulation.interet_total) +
+            "&montant_total=" + encodeURIComponent(derniereSimulation.montant_total) +
+            "&mensualite=" + encodeURIComponent(derniereSimulation.mensualite) +
+            "&id_types_pret=" + encodeURIComponent(derniereSimulation.id_types_pret);
+
+        ajax("POST", "/simulations", data, function(response) {
+            if (response.success) {
+                alert("✅ Simulation enregistrée avec succès !");
+                chargerSimulations();
+            } else {
+                alert("❌ Erreur lors de l'enregistrement de la simulation : " + (response.error || "Erreur inconnue"));
+            }
+        });
+    }
+
+    function afficherModalPret(id_simulation) {
+        ajax("GET", "/simulations", null, (data) => {
+            if (!data.success && data.error) {
+                alert("Erreur lors du chargement de la simulation : " + data.error);
+                return;
+            }
+            simulationSelectionnee = data.find(s => s.id_simulation == id_simulation);
+            if (!simulationSelectionnee) {
+                alert("Simulation non trouvée.");
+                return;
+            }
+            const modal = document.getElementById("modalPret");
+            modal.classList.add("show");
+            document.getElementById("client").value = "";
+            document.getElementById("assurance").value = "";
+            document.getElementById("delai_grace").value = "0";
+            document.getElementById("date_debut").value = "";
+        });
+    }
+
+    function fermerModalPret() {
+        const modal = document.getElementById("modalPret");
+        modal.classList.remove("show");
+        simulationSelectionnee = null;
+    }
+
+    function validerPret() {
+        if (!simulationSelectionnee) {
+            alert("Aucune simulation sélectionnée pour valider.");
+            return;
+        }
+    
+        const id_clients = document.getElementById("client").value;
+        const assuranceValue = document.getElementById("assurance").value;
+        const assurance = assuranceValue === "" ? 0 : parseFloat(assuranceValue);
+        const delaiValue = document.getElementById("delai_grace").value;
+        const delai_grace = delaiValue === "" ? 0 : parseInt(delaiValue, 10);
+        const date_debut = document.getElementById("date_debut").value;
+    
+        if (!id_clients || !date_debut) {
+            alert("Veuillez remplir tous les champs obligatoires (Client et Date de début).");
+            return;
+        }
+    
+        // Validation des données
+        if (isNaN(simulationSelectionnee.montant) || parseFloat(simulationSelectionnee.montant) <= 0) {
+            alert("Le montant de la simulation est invalide.");
+            return;
+        }
+        if (isNaN(simulationSelectionnee.duree_mois) || parseInt(simulationSelectionnee.duree_mois) <= 0) {
+            alert("La durée de la simulation est invalide.");
+            return;
+        }
+        if (isNaN(assurance) || assurance < 0 || assurance > 99.99) {
+            alert("L'assurance doit être comprise entre 0 et 99.99%.");
+            return;
+        }
+        if (isNaN(delai_grace) || delai_grace < 0) {
+            alert("Le délai de grâce ne peut pas être négatif.");
+            return;
+        }
+    
+        const data =
+            "id_types_pret=" + encodeURIComponent(simulationSelectionnee.id_types_pret) +
+            "&id_clients=" + encodeURIComponent(id_clients) +
+            "&montant_prets=" + encodeURIComponent(parseFloat(simulationSelectionnee.montant).toFixed(2)) +
+            "&assurance=" + encodeURIComponent(assurance.toFixed(2)) +
+            "&delai_grace=" + encodeURIComponent(delai_grace) +
+            "&date_debut=" + encodeURIComponent(date_debut) +
+            "&duree_en_mois=" + encodeURIComponent(parseInt(simulationSelectionnee.duree_mois, 10));
+    
+            ajax("POST", "/prets", data, function(response) {
+                if (response.success) {
+                    alert("✅ Prêt enregistré avec succès !");
+                    fermerModalPret();
+                    chargerSimulations();
+                } else {
+                    console.error("Erreur API POST /prets :", response);
+                    alert("❌ Erreur lors de l'enregistrement du prêt : " +
+                          (response.details || response.error || "Erreur inconnue"));
+                }
+            });
+    }
+
+    // Initialiser
+    document.addEventListener("DOMContentLoaded", () => {
+        chargerTaux(() => {
+            chargerSimulations();
+            chargerClients();
+        });
+    });
+
+    // Sidebar responsive
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        sidebar.classList.toggle('collapsed');
+        sidebar.classList.toggle('show');
+        mainContent.classList.toggle('sidebar-collapsed');
+    });
+</script>
+</body>
+</html>

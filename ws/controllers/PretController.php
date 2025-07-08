@@ -156,5 +156,64 @@ class PretController {
         $result = Pret::getEcheancier($id);
         Flight::json($result);
     }
+    public static function importerDepuisCSV() {
+        if (!isset($_FILES['fichier'])) {
+            Flight::halt(400, "Aucun fichier fourni");
+        }
+
+        $fichierTmp = $_FILES['fichier']['tmp_name'];
+        if (!file_exists($fichierTmp)) {
+            Flight::halt(400, "Fichier introuvable");
+        }
+
+        $handle = fopen($fichierTmp, 'r');
+        if (!$handle) {
+            Flight::halt(500, "Erreur lors de la lecture du fichier");
+        }
+
+        $db = getDB();
+        $db->beginTransaction();
+
+        $ligne = 0;
+        while (($data = fgetcsv($handle, 1000, ",")) !== false) {
+            $ligne++;
+
+            if ($ligne == 1) continue; // Ignorer l'en-tête
+
+            list($id_clients, $id_types_pret, $montant, $date_debut, $duree, $assurance, $delai_grace) = $data;
+
+            // Vérification du fond disponible
+            $fond = Fond::getFondActuelJusque($date_debut);
+            if ($fond['fond_actuel'] < $montant) {
+                $db->rollBack();
+                Flight::halt(400, "Fonds insuffisants pour la ligne $ligne (Client: $id_clients)");
+            }
+
+            // Insertion du prêt
+            $idPret = Pret::create((object)[
+                'id_clients' => $id_clients,
+                'id_types_pret' => $id_types_pret,
+                'montant_prets' => $montant,
+                'date_debut' => $date_debut,
+                'duree_en_mois' => $duree,
+                'assurance' => $assurance,
+                'delai_grace' => $delai_grace
+            ]);
+
+            MvtPret::ajouterMouvement([
+                'id_prets' => $idPret,
+                'id_status_prets' => 1,
+                'date_mouvement' => $date_debut
+            ]);
+
+            Fond::ajouterAvecDetails($montant, $date_debut, $idPret);
+        }
+
+        $db->commit();
+        fclose($handle);
+
+        Flight::json(['success' => true, 'message' => 'Import CSV réussi']);
+    }
+
 
 }

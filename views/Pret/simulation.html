@@ -41,6 +41,10 @@
         <div class="nav-item"><a href="liste.html" class="nav-link"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
         <div class="nav-item"><a href="echeancier.html" class="nav-link "><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
         <div class="nav-item"><a href="interet.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
+        <div class="nav-item"><a href="simulationCompare.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Comparer Simulqtion</span></a></div>
+        <div class="nav-item"><a href="simulationCompare.html" class="nav-link"><i class="fas fa-balance-scale mr-3"></i><span>Comparer Simulation</span></a></div>
+
+
     </div>
     <div class="sidebar-footer">
         <div class="user-info">
@@ -87,12 +91,17 @@
 
         <!-- Résultat -->
         <div id="resultat" class="form-section fade-in" style="display: none;"></div>
+        <div id="resultat-content"></div>
+            <button class="btn btn-primary mt-3" onclick="sauvegarderSimulation()">
+                <i class="fas fa-save me-2"></i>Sauvegarder cette simulation
+            </button>
     </div>
 </main>
 
 <!-- JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
+    let derniereSimulation = null;
     const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
     let tauxPret = [];
 
@@ -107,6 +116,31 @@
         };
         xhr.send(data);
     }
+
+    function sauvegarderSimulation() {
+        if (!derniereSimulation) {
+            alert("Veuillez d'abord effectuer une simulation.");
+            return;
+        }
+    
+        const data =
+            "montant=" + encodeURIComponent(derniereSimulation.montant) +
+            "&duree=" + encodeURIComponent(derniereSimulation.duree) +
+            "&taux_annuel=" + encodeURIComponent(derniereSimulation.taux_annuel) +
+            "&interet_total=" + encodeURIComponent(derniereSimulation.interet_total) +
+            "&montant_total=" + encodeURIComponent(derniereSimulation.montant_total) +
+            "&mensualite=" + encodeURIComponent(derniereSimulation.mensualite) +
+            "&id_types_pret=" + encodeURIComponent(derniereSimulation.id_types_pret);
+    
+        ajax("POST", "/simulations", data, function(response) {
+            if (response.success) {
+                alert("✅ Simulation enregistrée avec succès !");
+            } else {
+                alert("❌ Erreur lors de l'enregistrement de la simulation.");
+            }
+        });
+    }
+    
 
     function chargerTaux() {
         ajax("GET", "/taux", null, (data) => {
@@ -150,8 +184,20 @@
         <strong>Intérêt total :</strong> ${totalInteret.toFixed(2).toLocaleString()} Ar<br>
         <strong>Montant total à rembourser :</strong> ${total.toFixed(2).toLocaleString()} Ar<br>
         <strong>Mensualité estimée :</strong> ${mensualite.toFixed(2).toLocaleString()} Ar/mois
-      `;
+        `;
+
+        derniereSimulation = {
+            montant: montant,
+            duree: duree,
+            taux_annuel: tauxAnnuel,
+            interet_total: totalInteret.toFixed(2),
+            montant_total: total.toFixed(2),
+            mensualite: mensualite.toFixed(2),
+            id_types_pret: idType
+        };
     }
+
+
 
     // Initialiser
     document.addEventListener("DOMContentLoaded", () => {

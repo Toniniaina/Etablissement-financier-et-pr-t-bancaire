@@ -6,6 +6,7 @@ require_once __DIR__ . '/../controllers/PretController.php';
 require_once __DIR__ . '/../controllers/FondController.php';
 require_once __DIR__ . '/../controllers/DetailFondController.php';
 require_once __DIR__ . '/../controllers/TauxController.php';
+require_once __DIR__ . '/../controllers/SimulationController.php';
 
 require_once __DIR__ . '/../controllers/UtilisateurController.php';
 
@@ -15,6 +16,8 @@ Flight::route('POST /register', ['UtilisateurController', 'register']);
 require_once __DIR__ . '/../controllers/ClientController.php';
 Flight::route('GET /prets/interets', ['PretController', 'getInteretsParMois']);
 Flight::route('GET /clients', ['ClientController', 'getAll']);
+Flight::route('POST /prets/import', ['PretController', 'importerDepuisCSV']);
+
 
 
 Flight::route('GET /prets', ['PretController', 'getAll']);
@@ -44,4 +47,8 @@ Flight::route('GET /fond_actuel', ['DetailFondController', 'getFondActuel']);
 Flight::route('GET /taux', ['TauxController', 'getAll']);
 
 Flight::route('GET /prets/echeancier', ['PretController', 'getEcheancierByPret']);
+
+Flight::route('POST /simulations', ['SimulationController', 'create']);
+Flight::route('GET /simulations', ['SimulationController', 'getAll']);
+
 

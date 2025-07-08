@@ -94,3 +94,15 @@ CREATE TABLE Remboursements (
 );
 
 
+CREATE TABLE simulations (
+    id_simulation SERIAL PRIMARY KEY,
+    montant NUMERIC(15, 2) NOT NULL,
+    duree_mois INT NOT NULL,
+    taux_annuel NUMERIC(5, 2) NOT NULL,
+    interet_total NUMERIC(15, 2) NOT NULL,
+    montant_total NUMERIC(15, 2) NOT NULL,
+    mensualite NUMERIC(15, 2) NOT NULL,
+    id_types_pret INT REFERENCES types_pret(id_types_pret)
+);
+
+
