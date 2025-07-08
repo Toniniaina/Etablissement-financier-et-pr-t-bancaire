@@ -15,6 +15,8 @@ Flight::route('POST /register', ['UtilisateurController', 'register']);
 require_once __DIR__ . '/../controllers/ClientController.php';
 Flight::route('GET /prets/interets', ['PretController', 'getInteretsParMois']);
 Flight::route('GET /clients', ['ClientController', 'getAll']);
+Flight::route('POST /prets/import', ['PretController', 'importerDepuisCSV']);
+
 
 
 Flight::route('GET /prets', ['PretController', 'getAll']);
