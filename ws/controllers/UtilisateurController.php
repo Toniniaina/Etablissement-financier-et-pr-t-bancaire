@@ -16,8 +16,7 @@ class UtilisateurController
 
         $utilisateur = Utilisateur::getByEmail($email);
 
-        if ($utilisateur && $utilisateur['mot_de_passe'] === $mot_de_passe) { // mot de passe non hashé
-            // Tu peux ici démarrer une session ou retourner des infos utilisateur
+        if ($utilisateur && $utilisateur['mot_de_passe'] === $mot_de_passe) { 
             echo json_encode(['success' => true, 'id_utilisateurs' => $utilisateur['id_utilisateurs']]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Email ou mot de passe incorrect !']);
@@ -36,7 +35,6 @@ class UtilisateurController
             return;
         }
 
-        // Vérifier l'unicité de l'email
         if (Utilisateur::getByEmail($email)) {
             Flight::json(['success' => false, 'message' => "Cet email est déjà utilisé."]);
             return;
@@ -46,7 +44,7 @@ class UtilisateurController
             "nom_utilisateurs" => $nom,
             "prenom_utilisateurs" => $prenom,
             "email" => $email,
-            "mot_de_passe" => $mot_de_passe // mot de passe en clair pour la consigne, à hasher en prod
+            "mot_de_passe" => $mot_de_passe 
         ];
 
         $id = Utilisateur::create($data);
