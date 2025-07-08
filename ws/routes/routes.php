@@ -32,6 +32,7 @@ Flight::route('POST /prets', ['PretController', 'ajouterPret']);
 Flight::route('POST /prets/search', ['PretController', 'rechercher']);
 Flight::route('POST /prets/approuver', ['PretController', 'approuver']);
 Flight::route('POST /prets/rejeter', ['PretController', 'rejeter']);
+Flight::route('POST /prets/rembourser', ['PretController', 'rejeter']);
 
 
 Flight::route('GET /fonds', ['FondController', 'getAll']);

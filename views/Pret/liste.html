@@ -148,6 +148,7 @@
                 <th>Statut</th>
                 <th>Approuver</th>
                 <th>Rejeter</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -208,36 +209,47 @@
         data.forEach((p) => {
           const tr = document.createElement("tr");
           tr.innerHTML = `
-          <td>${p.nom_clients} ${p.prenom_clients}</td>
-          <td>${p.nom_type_pret}</td>
-          <td>${p.montant_prets} Ar</td>
-          <td>${p.assurance ?? "-"}</td>
-          <td>${p.delai_grace ?? 0}</td>
-          <td>${p.date_dernier_changement_statut}</td>
-          <td>${p.duree_en_mois} mois</td>
-          <td>${p.statut_actuel}</td>
-          <td>${
-            p.statut_actuel.toLowerCase() === "en attente"
-              ? `
-              <button class="btn btn-success btn-sm mb-1" onclick="toggleForm(${p.id_prets}, 'approuver')">✔ Approuver</button>
-              <div id="form-approuver-${p.id_prets}" style="display:none;" class="mt-1">
-                <input type="date" id="dateApprobation-${p.id_prets}" class="form-control form-control-sm mb-1" />
-                <button class="btn btn-sm btn-primary" onclick="approuverPret(${p.id_prets})">Valider</button>
-              </div>
-            `
-              : "-"
-          }</td>
-          <td>${
-            p.statut_actuel.toLowerCase() === "en attente"
-              ? `
-              <button class="btn btn-danger btn-sm mb-1" onclick="toggleForm(${p.id_prets}, 'rejeter')">✖ Rejeter</button>
-              <div id="form-rejeter-${p.id_prets}" style="display:none;" class="mt-1">
-                <input type="date" id="dateApprobationRejet-${p.id_prets}" class="form-control form-control-sm mb-1" />
-                <button class="btn btn-sm btn-secondary" onclick="rejeterPret(${p.id_prets})">Valider</button>
-              </div>
-            `
-              : "-"
-          }</td>`;
+      <td>${p.nom_clients} ${p.prenom_clients}</td>
+      <td>${p.nom_type_pret}</td>
+      <td>${p.montant_prets} Ar</td>
+      <td>${p.assurance ?? "-"}</td>
+      <td>${p.delai_grace ?? 0}</td>
+      <td>${p.date_dernier_changement_statut}</td>
+      <td>${p.duree_en_mois} mois</td>
+      <td>${p.statut_actuel}</td>
+      <td>${
+        p.statut_actuel.toLowerCase() === "en attente"
+          ? `
+            <button class="btn btn-success btn-sm mb-1" onclick="toggleForm(${p.id_prets}, 'approuver')">✔ Approuver</button>
+            <div id="form-approuver-${p.id_prets}" style="display:none;" class="mt-1">
+              <input type="date" id="dateApprobation-${p.id_prets}" class="form-control form-control-sm mb-1" />
+              <button class="btn btn-sm btn-primary" onclick="approuverPret(${p.id_prets})">Valider</button>
+            </div>
+          `
+          : "-"
+      }</td>
+      <td>${
+        p.statut_actuel.toLowerCase() === "en attente"
+          ? `
+            <button class="btn btn-danger btn-sm mb-1" onclick="toggleForm(${p.id_prets}, 'rejeter')">✖ Rejeter</button>
+            <div id="form-rejeter-${p.id_prets}" style="display:none;" class="mt-1">
+              <input type="date" id="dateApprobationRejet-${p.id_prets}" class="form-control form-control-sm mb-1" />
+              <button class="btn btn-sm btn-secondary" onclick="rejeterPret(${p.id_prets})">Valider</button>
+            </div>
+          `
+          : "-"
+      }</td>
+      <td>${
+        p.statut_actuel.toLowerCase() === "approuve"
+          ? `<button class="btn btn-warning btn-sm" 
+         onclick="ouvrirModalPaiement(${p.id_prets}, ${p.montant_prets}, ${
+              p.taux ?? 10
+            }, ${p.duree_en_mois}, ${p.assurance ?? 0})">
+         Rembourser
+       </button>`
+          : "-"
+      }</td>
+    `;
           tbody.appendChild(tr);
         });
       }
@@ -256,6 +268,11 @@
           if (approuverForm) approuverForm.style.display = "none";
           rejeterForm.style.display =
             rejeterForm.style.display === "none" ? "block" : "none";
+        } else if (action === "payer") {
+          const payerForm = document.getElementById(`form-payer-${idPret}`);
+          if (payerForm)
+            payerForm.style.display =
+              payerForm.style.display === "none" ? "block" : "none";
         }
       }
 
@@ -300,6 +317,137 @@
           .getElementById("mainContent")
           .classList.toggle("sidebar-collapsed");
       });
+
+      let pretEnCours = null;
+
+      function ouvrirModalPaiement(
+        idPret,
+        capital,
+        tauxAnnuel,
+        dureeMois,
+        assurancePourcent
+      ) {
+        pretEnCours = {
+          idPret,
+          capital,
+          tauxAnnuel,
+          dureeMois,
+          assurancePourcent,
+        };
+
+        // Remplir les champs initiaux
+        document.getElementById("modal-id-prets").value = idPret;
+        document.getElementById("modal-dateRemb").value = "";
+        document.getElementById("modal-nbMois").value = "1";
+        document.getElementById("modal-mensualite").innerText = "-";
+        document.getElementById("modal-assurance").innerText = "-";
+
+        // Ouvrir la modale
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalRemboursement")
+        );
+        modal.show();
+      }
+
+      function validerPaiementDepuisModal() {
+        const date = document.getElementById("modal-dateRemb").value;
+        const nbMois = parseInt(document.getElementById("modal-nbMois").value);
+        const { idPret } = pretEnCours;
+
+        if (!date || isNaN(nbMois) || nbMois <= 0) {
+          return alert("Veuillez remplir tous les champs correctement.");
+        }
+
+        const params = `id_prets=${idPret}&date_remboursement=${date}&nb_mois=${nbMois}`;
+
+        ajax("POST", "/prets/rembourser", params, () => {
+          alert("Paiement enregistré !");
+          rechercherPrets();
+
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("modalRemboursement")
+          );
+          modal.hide();
+        });
+      }
+
+      // Écouteur dynamique pour calcul automatique (optionnel si souhaité)
+      document.getElementById("modal-nbMois").addEventListener("input", () => {
+        if (!pretEnCours) return;
+        const nbMois = parseInt(document.getElementById("modal-nbMois").value);
+        const mensualite = calculerMensualite(
+          pretEnCours.capital,
+          pretEnCours.tauxAnnuel,
+          pretEnCours.dureeMois
+        );
+        const assurance = calculerAssurance(
+          pretEnCours.assurancePourcent,
+          pretEnCours.capital,
+          pretEnCours.dureeMois
+        );
+      });
     </script>
+    <!-- Modal Remboursement -->
+    <div
+      class="modal fade"
+      id="modalRemboursement"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-warning text-white">
+            <h5 class="modal-title">Formulaire de Remboursement</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Fermer"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="modal-id-prets" />
+
+            <div class="mb-3">
+              <label for="modal-dateRemb" class="form-label"
+                >Date de remboursement</label
+              >
+              <input type="date" class="form-control" id="modal-dateRemb" />
+            </div>
+
+            <div class="mb-3">
+              <label for="modal-nbMois" class="form-label"
+                >Nombre de mois à payer</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="modal-nbMois"
+                value="1"
+                min="1"
+              />
+            </div>
+
+            <div class="text-sm text-muted">
+              <strong></strong>
+              <span id="modal-mensualite">-</span><br />
+              <strong></strong>
+              <span id="modal-assurance">-</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Annuler
+            </button>
+            <button
+              class="btn btn-success"
+              onclick="validerPaiementDepuisModal()"
+            >
+              Valider paiement
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
