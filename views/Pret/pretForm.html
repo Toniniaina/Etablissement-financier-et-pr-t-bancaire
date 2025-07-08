@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title>Ajouter un prêt</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <title>Ajouter un prêt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Bootstrap + Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
@@ -71,120 +71,292 @@
         <div class="col-md-6">
           <label for="client" class="form-label">Client</label>
           <select class="form-select" id="client"></select>
+    <!-- Bootstrap + Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../scss/style.scss" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="logo ms-3">
+            <i class="fas fa-university"></i>
+            <span>FinanceBank</span>
+          </div>
         </div>
-        <div class="col-md-6">
-          <label for="typePret" class="form-label">Type de prêt</label>
-          <select class="form-select" id="typePret"></select>
-        </div>
-      </div>
-
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <label for="montant" class="form-label">Montant</label>
-          <input type="number" class="form-control" id="montant" step="0.01" />
-        </div>
-        <div class="col-md-6">
-          <label for="duree" class="form-label">Durée (mois)</label>
-          <input type="number" class="form-control" id="duree" />
-        </div>
-      </div>
-
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <label for="dateDebut" class="form-label">Date début</label>
-          <input type="date" class="form-control" id="dateDebut" />
-        </div>
-        <div class="col-md-6">
-          <label for="assurance" class="form-label">Assurance (% ou montant)</label>
-          <input type="number" class="form-control" id="assurance" step="0.01" min="0" value="0.00" />
-        </div>
-      </div>
-
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <label for="delaiGrace" class="form-label">Délai de grâce (mois)</label>
-          <input type="number" class="form-control" id="delaiGrace" min="0" value="0" />
+        <div class="header-actions">
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-user"></i> Profil
+          </button>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </button>
         </div>
       </div>
+    </header>
 
-      <div class="mt-4">
-        <button class="btn btn-primary" onclick="ajouterPret()">
-          <i class="fas fa-save me-2"></i>Ajouter le prêt
-        </button>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h5>Menu Principal</h5>
+        <div class="sidebar-subtitle">Gestion Financière</div>
       </div>
-    </div>
-  </div>
-</main>
+      <div class="nav-menu">
+        <div class="nav-item">
+          <a href="../../index.php" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="simulation.html" class="nav-link"
+            ><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="pretForm.html" class="nav-link active"
+            ><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="liste.html" class="nav-link"
+            ><i class="fas fa-list"></i><span>Liste des Prêts</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="echeancier.html" class="nav-link"
+            ><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="interet.html" class="nav-link"
+            ><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a
+          >
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar"><i class="fas fa-user"></i></div>
+          <div class="user-details">
+            <div class="user-name">Admin</div>
+            <div class="user-role">Gestionnaire</div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<!-- JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script>
-  const apiBase = "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <div class="content-wrapper">
+        <div class="page-header">
+          <h1><i class="fas fa-plus-circle me-3"></i>Ajouter un prêt</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="#">Accueil</a></li>
+              <li class="breadcrumb-item active">Ajouter un prêt</li>
+            </ol>
+          </nav>
+        </div>
 
-  function ajax(method, url, data, callback) {
-    const xhr = new XMLHttpRequest();
-    xhr.open(method, apiBase + url, true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) callback(JSON.parse(xhr.responseText));
-        else alert("Erreur : " + xhr.responseText);
+        <div class="form-section fade-in">
+          <div class="row">
+            <div class="col-md-6">
+              <label for="client" class="form-label">Client</label>
+              <select class="form-select" id="client"></select>
+            </div>
+            <div class="col-md-6">
+              <label for="typePret" class="form-label">Type de prêt</label>
+              <select class="form-select" id="typePret"></select>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="montant" class="form-label">Montant</label>
+              <input
+                type="number"
+                class="form-control"
+                id="montant"
+                step="0.01"
+              />
+            </div>
+            <div class="col-md-6">
+              <label for="duree" class="form-label">Durée (mois)</label>
+              <input type="number" class="form-control" id="duree" />
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="dateDebut" class="form-label">Date début</label>
+              <input type="date" class="form-control" id="dateDebut" />
+            </div>
+            <div class="col-md-6">
+              <label for="assurance" class="form-label"
+                >Assurance (% ou montant)</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="assurance"
+                step="0.01"
+                min="0"
+                value="0.00"
+              />
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label for="delaiGrace" class="form-label"
+                >Délai de grâce (mois)</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="delaiGrace"
+                min="0"
+                value="0"
+              />
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button class="btn btn-primary" onclick="ajouterPret()">
+              <i class="fas fa-save me-2"></i>Ajouter le prêt
+            </button>
+          </div>
+        </div>
+        <h2>Importer prêts CSV</h2>
+        <form id="formImportCSV" method="POST" enctype="multipart/form-data">
+          <input
+            type="file"
+            name="fichier"
+            id="fichier"
+            accept=".csv"
+            required
+          />
+          <button type="submit">Importer</button>
+        </form>
+      </div>
+    </main>
+
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const apiBase =
+        "http://localhost/Etablissement-financier-et-pr-t-bancaire/ws";
+
+      function ajax(method, url, data, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, apiBase + url, true);
+
+        // Si data est une chaîne (urlencoded), on met le header
+        if (typeof data === "string") {
+          xhr.setRequestHeader(
+            "Content-Type",
+            "application/x-www-form-urlencoded"
+          );
+        }
+
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) callback(JSON.parse(xhr.responseText));
+            else alert("Erreur : " + xhr.responseText);
+          }
+        };
+        xhr.send(data);
       }
-    };
-    xhr.send(data);
-  }
 
-  function chargerClientsEtTypes() {
-    ajax("GET", "/clients", null, (clients) => {
-      const selectClient = document.getElementById("client");
-      clients.forEach((c) => {
-        const opt = document.createElement("option");
-        opt.value = c.id_clients;
-        opt.textContent = c.nom_clients + " " + c.prenom_clients;
-        selectClient.appendChild(opt);
+      function chargerClientsEtTypes() {
+        ajax("GET", "/clients", null, (clients) => {
+          const selectClient = document.getElementById("client");
+          clients.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c.id_clients;
+            opt.textContent = c.nom_clients + " " + c.prenom_clients;
+            selectClient.appendChild(opt);
+          });
+        });
+
+        ajax("GET", "/typesprets", null, (types) => {
+          const selectType = document.getElementById("typePret");
+          types.forEach((t) => {
+            const opt = document.createElement("option");
+            opt.value = t.id_types_pret;
+            opt.textContent = t.nom_type_pret;
+            selectType.appendChild(opt);
+          });
+        });
+      }
+
+      function ajouterPret() {
+        const client = document.getElementById("client").value;
+        const typePret = document.getElementById("typePret").value;
+        const montant = document.getElementById("montant").value;
+        const duree = document.getElementById("duree").value;
+        const dateDebut = document.getElementById("dateDebut").value;
+        const assurance = document.getElementById("assurance").value;
+        const delaiGrace = document.getElementById("delaiGrace").value;
+
+        const data =
+          `id_clients=${client}&id_types_pret=${typePret}&montant_prets=${montant}` +
+          `&duree_en_mois=${duree}&date_debut=${dateDebut}` +
+          `&assurance=${assurance}&delai_grace=${delaiGrace}`;
+
+        ajax("POST", "/prets", data, () => {
+          alert("Prêt enregistré avec succès !");
+        });
+      }
+
+      function importerPretsDepuisCSV(file) {
+        const formData = new FormData();
+        formData.append("fichier", file);
+
+        // Passer formData directement à ajax
+        ajax("POST", "/prets/import", formData, (res) => {
+          alert(
+            `Import terminé ✅\nSuccès : ${res.success}\nErreurs : ${res.erreurs}`
+          );
+        });
+      }
+
+      // Initialisation
+      document.addEventListener("DOMContentLoaded", () => {
+        chargerClientsEtTypes();
+
+        document
+          .getElementById("formImportCSV")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            const fichier = document.getElementById("fichier").files[0];
+            if (!fichier) {
+              alert("Veuillez sélectionner un fichier CSV.");
+              return;
+            }
+            importerPretsDepuisCSV(fichier);
+          });
+
+        // Sidebar responsive
+        document
+          .getElementById("sidebarToggle")
+          .addEventListener("click", function () {
+            document.getElementById("sidebar").classList.toggle("collapsed");
+            document
+              .getElementById("mainContent")
+              .classList.toggle("sidebar-collapsed");
+          });
       });
-    });
-
-    ajax("GET", "/typesprets", null, (types) => {
-      const selectType = document.getElementById("typePret");
-      types.forEach((t) => {
-        const opt = document.createElement("option");
-        opt.value = t.id_types_pret;
-        opt.textContent = t.nom_type_pret;
-        selectType.appendChild(opt);
-      });
-    });
-  }
-
-  function ajouterPret() {
-    const client = document.getElementById("client").value;
-    const typePret = document.getElementById("typePret").value;
-    const montant = document.getElementById("montant").value;
-    const duree = document.getElementById("duree").value;
-    const dateDebut = document.getElementById("dateDebut").value;
-    const assurance = document.getElementById("assurance").value;
-    const delaiGrace = document.getElementById("delaiGrace").value;
-
-    const data =
-            `id_clients=${client}&id_types_pret=${typePret}&montant_prets=${montant}` +
-            `&duree_en_mois=${duree}&date_debut=${dateDebut}` +
-            `&assurance=${assurance}&delai_grace=${delaiGrace}`;
-
-    ajax("POST", "/prets", data, () => {
-      alert("Prêt enregistré avec succès !");
-    });
-  }
-
-  // Initialisation
-  document.addEventListener("DOMContentLoaded", () => {
-    chargerClientsEtTypes();
-  });
-
-  // Sidebar responsive
-  document.getElementById('sidebarToggle').addEventListener('click', function () {
-    document.getElementById('sidebar').classList.toggle('collapsed');
-    document.getElementById('mainContent').classList.toggle('sidebar-collapsed');
-  });
-</script>
-</body>
+    </script>
+  </body>
 </html>

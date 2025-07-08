@@ -31,36 +31,37 @@ class PretController {
         $resultats = Pret::getInteretsParMois($debut, $fin);
         Flight::json($resultats);
     }
-
-    
-    public static function ajouterPret() {
+    public static function ajouterPret($returnJson = true) {
         $data = Flight::request()->data;
-
+    
         $fonds = Fond::getFondActuelJusque($data->date_debut);
         $fondsDisponible = $fonds['fond_actuel'];
+        error_log("Fonds disponibles: " . $fondsDisponible . ", Montant prêt demandé: " . $data->montant_prets);
         if ($fondsDisponible < $data->montant_prets) {
             Flight::halt(400, "Fond insuffisants");
         }
-
+    
         $idPret = Pret::create($data);
-
-     
+    
         MvtPret::ajouterMouvement([
             'id_prets' => $idPret,
             'id_status_prets' => 1,
             'date_mouvement' => $data->date_debut
         ]);
-
+    
         Fond::ajouterAvecDetails(
             $data->montant_prets,
             $data->date_debut,
             $idPret
         );
-
-
-        Flight::json(['success' => true, 'id_pret' => $idPret]);
+    
+        if ($returnJson) {
+            Flight::json(['success' => true, 'id_pret' => $idPret]);
+        } else {
+            return ['success' => true, 'id_pret' => $idPret];
+        }
     }
-
+    
     public static function rechercher() {
         $data = Flight::request()->data;
         $resultats = Pret::rechercheAvecFiltre($data);
@@ -156,5 +157,84 @@ class PretController {
         $result = Pret::getEcheancier($id);
         Flight::json($result);
     }
+
+    public static function importCSV() {
+        if (!isset($_FILES['fichier']) || $_FILES['fichier']['error'] !== UPLOAD_ERR_OK) {
+            Flight::halt(400, "Fichier invalide");
+        }
+    
+        $fichier = $_FILES['fichier']['tmp_name'];
+        $handle = fopen($fichier, 'r');
+        if (!$handle) {
+            Flight::halt(500, "Erreur lors de la lecture du fichier");
+        }
+    
+        $db = getDB();
+    
+        $ligne = 0;
+        $success = 0;
+        $erreurs = 0;
+        $entetes = [];
+    
+        while (($row = fgetcsv($handle, 1000, ',')) !== false) {
+            $ligne++;
+    
+            // Lire l'en-tête
+            if ($ligne === 1) {
+                $entetes = $row;
+                continue;
+            }
+    
+            // Associer en-têtes et valeurs
+            $dataAssoc = array_combine($entetes, $row);
+            if (!$dataAssoc) {
+                $erreurs++;
+                continue;
+            }
+    
+            // Convertir nom_type_pret en id_types_pret si nécessaire
+            if (isset($dataAssoc['nom_type_pret']) && !isset($dataAssoc['id_types_pret'])) {
+                $stmt = $db->prepare("SELECT id_types_pret FROM Types_pret WHERE LOWER(nom_type_pret) = LOWER(?)");
+                $stmt->execute([$dataAssoc['nom_type_pret']]);
+                $idType = $stmt->fetchColumn();
+    
+                if (!$idType) {
+                    $erreurs++;
+                    continue; // Type non trouvé
+                }
+    
+                $dataAssoc['id_types_pret'] = $idType;
+            }
+    
+            // Vérification de l'existence des champs nécessaires
+            $champsRequis = ['id_clients', 'id_types_pret', 'montant_prets', 'duree_en_mois', 'date_debut'];
+            foreach ($champsRequis as $champ) {
+                if (!isset($dataAssoc[$champ]) || $dataAssoc[$champ] === '') {
+                    $erreurs++;
+                    continue 2;
+                }
+            }
+    
+            // Champs optionnels
+            $dataAssoc['assurance'] = $dataAssoc['assurance'] ?? 0;
+            $dataAssoc['delai_grace'] = $dataAssoc['delai_grace'] ?? 0;
+
+            Flight::request()->data = new \flight\util\Collection($dataAssoc);
+
+    
+            try {
+                self::ajouterPret(); // Réutilisation directe
+                $success++;
+            } catch (Exception $e) {
+                $erreurs++;
+                // Optionnel : logger $e->getMessage()
+            }
+        }
+    
+        fclose($handle);
+    
+        Flight::json(['success' => $success, 'erreurs' => $erreurs]);
+    }
+    
 
 }
