@@ -79,4 +79,18 @@ CREATE TABLE Details_fonds(
     FOREIGN KEY (id_prets) REFERENCES Prets(id_prets)
     
 );
+CREATE TABLE Remboursements (
+                                id_remboursement INT AUTO_INCREMENT PRIMARY KEY,
+                                id_prets INT NOT NULL,
+                                numero_mois INT NOT NULL, -- 1 = 1er mois, 2 = 2e mois, etc.
+                                date_remboursement DATE NOT NULL,
+                                montant_remboursement DECIMAL(15, 2) NOT NULL,
+                                interet DECIMAL(15, 2) DEFAULT 0.00,
+                                principal DECIMAL(15, 2) DEFAULT 0.00,
+                                assurance DECIMAL(15, 2) DEFAULT 0.00,
+                                reste_a_payer DECIMAL(15, 2) DEFAULT 0.00,
+                                UNIQUE(id_prets, numero_mois), -- empêche double remboursement pour un même mois
+                                FOREIGN KEY (id_prets) REFERENCES Prets(id_prets)
+);
+
 
