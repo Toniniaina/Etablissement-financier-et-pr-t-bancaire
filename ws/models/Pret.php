@@ -207,7 +207,8 @@ class Pret {
                 c.nom_clients,
                 c.prenom_clients,
                 t.nom_type_pret,
-                s.nom_status AS statut_actuel
+                s.nom_status AS statut_actuel,
+                m.date_mouvement AS date_dernier_changement_statut
             FROM Prets p
             JOIN Clients c ON p.id_clients = c.id_clients
             JOIN Types_pret t ON p.id_types_pret = t.id_types_pret
