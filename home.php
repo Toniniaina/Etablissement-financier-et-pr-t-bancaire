@@ -84,6 +84,8 @@
                     <span>Intérêts par Mois</span>
                 </a>
             </div>
+            <div class="nav-item"><a href="views/Pret/simulationCompare.html" class="nav-link"><i class="fas fa-balance-scale mr-3"></i><span>Comparer Simulation</span></a></div>
+
         </div>
         
         <div class="sidebar-footer">
