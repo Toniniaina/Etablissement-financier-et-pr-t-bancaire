@@ -3,6 +3,15 @@ DROP DATABASE IF EXISTS banque;
 CREATE DATABASE banque;
 USE banque;
 
+CREATE TABLE utilisateurs(
+    id_utilisateurs INT AUTO_INCREMENT PRIMARY KEY,
+    nom_utilisateurs VARCHAR(50) NOT NULL,
+    prenom_utilisateurs VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE Fonds(
     id_fonds INT AUTO_INCREMENT PRIMARY KEY,
     montant_fonds DECIMAL(20, 2) NOT NULL
