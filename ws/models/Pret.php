@@ -305,5 +305,50 @@ class Pret {
     }
 
 
+    public static function getEcheancierAvecLimite($idPret, $nbMois)
+    {
+        $db = getDB();
+        $stmt = $db->prepare("SELECT p.*, t.pourcentage FROM Prets p JOIN Taux t ON p.id_types_pret = t.id_types_pret WHERE p.id_prets = ?");
+        $stmt->execute([$idPret]);
+        $pret = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$pret) return [];
 
+        $capital = $pret['montant_prets'];
+        $tauxAnnuel = $pret['pourcentage'];
+        $dureeMois = $pret['duree_en_mois'];
+        $delaiGrace = (int)$pret['delai_grace'];
+        $assurance = $pret['assurance'];
+        $nbMensualites = max(1, $dureeMois - $delaiGrace);
+
+        $dateApprobationStr = self::getDateDebutReelle($idPret);
+        if (!$dateApprobationStr) return [];
+
+        $dateDebut  = new DateTime($dateApprobationStr);
+        
+        $mensualites = self::calculerMensualite($capital, $tauxAnnuel, $nbMensualites);
+        $assuranceParmois = self::calculerAssurance($assurance, $capital, $nbMensualites);
+        $mensualite = $mensualites + $assuranceParmois;
+        $tauxMensuel = $tauxAnnuel / 12 / 100;
+        $reste = $capital;
+
+        $mois = new DateTime($dateDebut->format('Y-m-01'));
+        $echeancier = [];
+
+        for ($i = 0; $i < $nbMois; $i++) {
+            $interet = round($reste * $tauxMensuel, 2);
+            $principal = round($mensualite - $interet - $assuranceParmois, 2);
+            $reste = round($reste - $principal, 2);
+            $echeancier[] = [
+                'mois' => $mois->format('Y-m'),
+                'mensualite' => round($mensualite, 2),
+                'interet' => $interet,
+                'principal' => $principal,
+                'reste' => max($reste, 0),
+                'assurance' => $assuranceParmois
+            ];
+            $mois->modify('+1 month');
+        }
+
+        return $echeancier;
+    }
 }

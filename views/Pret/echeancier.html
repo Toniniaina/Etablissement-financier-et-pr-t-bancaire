@@ -1,112 +1,175 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>Échéancier</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../../scss/style.scss" />
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        .card-blanche {
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .table thead th {
-            background-color: #f8f9fa;
-        }
+      html {
+        scroll-behavior: smooth;
+      }
+      .card-blanche {
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+      .table thead th {
+        background-color: #f8f9fa;
+      }
     </style>
-</head>
-<body>
-
-<header class="header">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
+  </head>
+  <body>
+    <header class="header">
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
         <div class="d-flex align-items-center">
-            <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-            <div class="logo ms-3">
-                <i class="fas fa-university"></i><span>FinanceBank</span>
-            </div>
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="logo ms-3">
+            <i class="fas fa-university"></i><span>FinanceBank</span>
+          </div>
         </div>
         <div class="header-actions">
-            <button class="btn btn-outline-light btn-sm"><i class="fas fa-user"></i> Profil</button>
-            <button class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-user"></i> Profil
+          </button>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </button>
         </div>
-    </div>
-</header>
+      </div>
+    </header>
 
-<nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
         <h5>Menu Principal</h5>
         <div class="sidebar-subtitle">Gestion Financière</div>
-    </div>
-    <div class="nav-menu">
-        <div class="nav-item"><a href="../../home.php" class="nav-link"><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a></div>
-        <div class="nav-item"><a href="simulation.html" class="nav-link"><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a></div>
-        <div class="nav-item"><a href="pretForm.html" class="nav-link"><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a></div>
-        <div class="nav-item"><a href="liste.html" class="nav-link"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
-        <div class="nav-item"><a href="echeancier.html" class="nav-link active"><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
-        <div class="nav-item"><a href="interet.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
-        <div class="nav-item"><a href="simulationCompare.html" class="nav-link"><i class="fas fa-balance-scale mr-3"></i><span>Comparer Simulation</span></a></div>
-
-    </div>
-    <div class="sidebar-footer">
-        <div class="user-info">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div class="user-details">
-                <div class="user-name">Admin</div>
-                <div class="user-role">Gestionnaire</div>
-            </div>
+      </div>
+      <div class="nav-menu">
+        <div class="nav-item">
+          <a href="../Fond/fondStat.html" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Statistiques des Fonds</span></a
+          >
         </div>
-    </div>
-</nav>
+        <div class="nav-item">
+          <a href="../../home.php" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="simulation.html" class="nav-link"
+            ><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="pretForm.html" class="nav-link"
+            ><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="liste.html" class="nav-link"
+            ><i class="fas fa-list"></i><span>Liste des Prêts</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="echeancier.html" class="nav-link active"
+            ><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="interet.html" class="nav-link"
+            ><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a
+          >
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar"><i class="fas fa-user"></i></div>
+          <div class="user-details">
+            <div class="user-name">Admin</div>
+            <div class="user-role">Gestionnaire</div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<main class="main-content" id="mainContent">
-    <div class="content-wrapper">
+    <main class="main-content" id="mainContent">
+      <div class="content-wrapper">
         <div class="page-header">
-            <h1><i class="fas fa-calendar-alt me-3"></i>Échéancier de remboursement</h1>
+          <h1>
+            <i class="fas fa-calendar-alt me-3"></i>Échéancier de remboursement
+          </h1>
         </div>
 
         <!-- Recherche client -->
         <div class="row mb-4 fade-in">
-            <div class="col-md-6">
-                <label for="recherche" class="form-label">Nom ou prénom client :</label>
-                <div class="input-group">
-                    <input type="text" id="recherche" class="form-control" placeholder="Ex : Rakoto">
-                    <button class="btn btn-primary" onclick="chercherClient()"><i class="fas fa-search me-1"></i> Rechercher</button>
-                </div>
+          <div class="col-md-6">
+            <label for="recherche" class="form-label"
+              >Nom ou prénom client :</label
+            >
+            <div class="input-group">
+              <input
+                type="text"
+                id="recherche"
+                class="form-control"
+                placeholder="Ex : Rakoto"
+              />
+              <button class="btn btn-primary" onclick="chercherClient()">
+                <i class="fas fa-search me-1"></i> Rechercher
+              </button>
             </div>
+          </div>
         </div>
 
         <!-- Clients -->
         <div class="card-blanche fade-in">
-            <h5>Clients trouvés</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped" id="table-clients">
-                    <thead>
-                    <tr><th>Nom</th><th>Prénom</th><th>Action</th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+          <h5>Clients trouvés</h5>
+          <div class="table-responsive">
+            <table
+              class="table table-bordered table-striped"
+              id="table-clients"
+            >
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Prénom</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Prêts -->
         <div class="card-blanche fade-in">
-            <h5>Prêts du client</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped" id="table-prets">
-                    <thead>
-                    <tr><th>Montant</th><th>Date Début</th><th>Durée (mois)</th><th>Action</th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+          <h5>Prêts du client</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="table-prets">
+              <thead>
+                <tr>
+                  <th>Montant</th>
+                  <th>Date Début</th>
+                  <th>Durée (mois)</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Échéancier -->
@@ -121,59 +184,65 @@
                 </table>
             </div>
         </div>
-    </div>
-</main>
+      </div>
+    </main>
 
 <script>
      const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
 
 
-    function ajax(method, url, data, callback) {
+      function ajax(method, url, data, callback) {
         const xhr = new XMLHttpRequest();
         xhr.open(method, apiBase + url, true);
         xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText));
-            }
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(JSON.parse(xhr.responseText));
+          }
         };
         xhr.send(data);
-    }
+      }
 
-    function chercherClient() {
+      function chercherClient() {
         const nom = document.getElementById("recherche").value.toLowerCase();
         ajax("GET", "/clients", null, (data) => {
-            const tbody = document.querySelector("#table-clients tbody");
-            tbody.innerHTML = "";
-            const resultats = data.filter(c =>
-                c.nom_clients.toLowerCase().includes(nom) || c.prenom_clients.toLowerCase().includes(nom)
-            );
-            resultats.forEach(client => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
+          const tbody = document.querySelector("#table-clients tbody");
+          tbody.innerHTML = "";
+          const resultats = data.filter(
+            (c) =>
+              c.nom_clients.toLowerCase().includes(nom) ||
+              c.prenom_clients.toLowerCase().includes(nom)
+          );
+          resultats.forEach((client) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
                   <td>${client.nom_clients}</td>
                   <td>${client.prenom_clients}</td>
                   <td><button class="btn btn-sm btn-outline-primary" onclick="chargerPretsClient(${client.id_clients})"><i class="fas fa-eye"></i> Voir prêts</button></td>
                 `;
-                tbody.appendChild(tr);
-            });
+            tbody.appendChild(tr);
+          });
         });
-    }
+      }
 
-    function chargerPretsClient(idClient) {
+      function chargerPretsClient(idClient) {
         ajax("GET", "/prets", null, (data) => {
-            const prets = data.filter(p => p.id_clients == idClient);
-            const tbody = document.querySelector("#table-prets tbody");
-            tbody.innerHTML = "";
-            document.querySelector("#table-echeancier tbody").innerHTML = "";
+          const prets = data.filter((p) => p.id_clients == idClient);
+          const tbody = document.querySelector("#table-prets tbody");
+          tbody.innerHTML = "";
+          document.querySelector("#table-echeancier tbody").innerHTML = "";
 
-            prets.forEach(p => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                  <td>${parseFloat(p.montant_prets).toLocaleString('fr-FR')} Ar</td>
+          prets.forEach((p) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                  <td>${parseFloat(p.montant_prets).toLocaleString(
+                    "fr-FR"
+                  )} Ar</td>
                   <td>${p.date_debut}</td>
                   <td>${p.duree_en_mois}</td>
                   <td>
-                    <button class="btn btn-sm btn-success me-1" onclick="chargerEcheancier(${p.id_prets})">
+                    <button class="btn btn-sm btn-success me-1" onclick="chargerEcheancier(${
+                      p.id_prets
+                    })">
                       <i class="fas fa-calendar-alt"></i> Échéancier
                     </button>
                     <a href="${apiBase}/export/export-pdf.php?id=${p.id_prets}" target="_blank" class="btn btn-sm btn-outline-danger">
@@ -181,18 +250,18 @@
                     </a>
                   </td>
                 `;
-                tbody.appendChild(tr);
-            });
+            tbody.appendChild(tr);
+          });
         });
-    }
+      }
 
-    function chargerEcheancier(idPret) {
+      function chargerEcheancier(idPret) {
         ajax("GET", `/prets/echeancier?id=${idPret}`, null, (data) => {
-            const tbody = document.querySelector("#table-echeancier tbody");
-            tbody.innerHTML = "";
-            data.forEach(e => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
+          const tbody = document.querySelector("#table-echeancier tbody");
+          tbody.innerHTML = "";
+          data.forEach((e) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
                   <td>${e.mois}</td>
                   <td>${e.mensualite.toLocaleString('fr-FR')} Ar</td>
                   <td>${e.interet.toLocaleString('fr-FR')} Ar</td>
@@ -200,19 +269,22 @@
                   <td>${e.assurance.toLocaleString('fr-FR')} Ar</td>
                   <td>${e.reste.toLocaleString('fr-FR')} Ar</td>
                 `;
-                tbody.appendChild(tr);
-            });
+            tbody.appendChild(tr);
+          });
 
-            // ➤ Scroll vers la section échéancier
-            document.getElementById("echeancier-section").scrollIntoView({ behavior: 'smooth' });
+          // ➤ Scroll vers la section échéancier
+          document
+            .getElementById("echeancier-section")
+            .scrollIntoView({ behavior: "smooth" });
         });
-    }
+      }
 
-    document.getElementById("sidebarToggle").addEventListener("click", () => {
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
         document.getElementById("sidebar").classList.toggle("collapsed");
-        document.getElementById("mainContent").classList.toggle("sidebar-collapsed");
-    });
-</script>
-
-</body>
+        document
+          .getElementById("mainContent")
+          .classList.toggle("sidebar-collapsed");
+      });
+    </script>
+  </body>
 </html>

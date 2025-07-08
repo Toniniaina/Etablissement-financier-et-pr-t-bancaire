@@ -1,231 +1,297 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>Intérêts par Mois</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../../scss/style.scss" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        #table-interets {
-            table-layout: fixed;
-            word-wrap: break-word;
-            width: 100%;
-        }
-        #interetsChart {
-            width: 100% !important;
-            height: 400px !important;
-        }
-        .card-blanche {
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            padding: 20px;
-            height: 100%;
-        }
+      #table-interets {
+        table-layout: fixed;
+        word-wrap: break-word;
+        width: 100%;
+      }
+      #interetsChart {
+        width: 100% !important;
+        height: 400px !important;
+      }
+      .card-blanche {
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        height: 100%;
+      }
     </style>
-</head>
-<body>
-<header class="header">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
+  </head>
+  <body>
+    <header class="header">
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
         <div class="d-flex align-items-center">
-            <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-            <div class="logo ms-3">
-                <i class="fas fa-university"></i><span>FinanceBank</span>
-            </div>
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="logo ms-3">
+            <i class="fas fa-university"></i><span>FinanceBank</span>
+          </div>
         </div>
         <div class="header-actions">
-            <button class="btn btn-outline-light btn-sm"><i class="fas fa-user"></i> Profil</button>
-            <button class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-user"></i> Profil
+          </button>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </button>
         </div>
-    </div>
-</header>
+      </div>
+    </header>
 
-<nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
         <h5>Menu Principal</h5>
         <div class="sidebar-subtitle">Gestion Financière</div>
-    </div>
-    <div class="nav-menu">
-        <div class="nav-item"><a href="../../home.php" class="nav-link"><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a></div>
-        <div class="nav-item"><a href="simulation.html" class="nav-link"><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a></div>
-        <div class="nav-item"><a href="pretForm.html" class="nav-link"><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a></div>
-        <div class="nav-item"><a href="liste.html" class="nav-link"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
-        <div class="nav-item"><a href="echeancier.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
-        <div class="nav-item"><a href="interet.html" class="nav-link active"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
-        <div class="nav-item"><a href="simulationCompare.html" class="nav-link"><i class="fas fa-balance-scale mr-3"></i><span>Comparer Simulation</span></a></div>
-
-    </div>
-    <div class="sidebar-footer">
-        <div class="user-info">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div class="user-details">
-                <div class="user-name">Admin</div>
-                <div class="user-role">Gestionnaire</div>
-            </div>
+      </div>
+      <div class="nav-menu">
+        <div class="nav-item">
+          <a href="../Fond/fondStat.html" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Statistiques des Fonds</span></a
+          >
         </div>
-    </div>
-</nav>
+        <div class="nav-item">
+          <a href="../../home.php" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="simulation.html" class="nav-link"
+            ><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="pretForm.html" class="nav-link"
+            ><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="liste.html" class="nav-link"
+            ><i class="fas fa-list"></i><span>Liste des Prêts</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="echeancier.html" class="nav-link"
+            ><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="interet.html" class="nav-link active"
+            ><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a
+          >
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar"><i class="fas fa-user"></i></div>
+          <div class="user-details">
+            <div class="user-name">Admin</div>
+            <div class="user-role">Gestionnaire</div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<main class="main-content" id="mainContent">
-    <div class="content-wrapper">
+    <main class="main-content" id="mainContent">
+      <div class="content-wrapper">
         <div class="page-header">
-            <h1><i class="fas fa-chart-line me-3"></i>Intérêts gagnés par mois</h1>
+          <h1>
+            <i class="fas fa-chart-line me-3"></i>Intérêts gagnés par mois
+          </h1>
         </div>
 
         <div class="row g-3 mb-4 fade-in">
-            <div class="col-md-4">
-                <label for="debut" class="form-label">Mois/Année début :</label>
-                <input type="month" class="form-control" id="debut">
-            </div>
-            <div class="col-md-4">
-                <label for="fin" class="form-label">Mois/Année fin :</label>
-                <input type="month" class="form-control" id="fin">
-            </div>
-            <div class="col-md-4 d-grid align-items-end">
-                <button class="btn btn-primary mt-3" onclick="chargerInterets()">
-                    <i class="fas fa-filter me-2"></i>Filtrer
-                </button>
-            </div>
+          <div class="col-md-4">
+            <label for="debut" class="form-label">Mois/Année début :</label>
+            <input type="month" class="form-control" id="debut" />
+          </div>
+          <div class="col-md-4">
+            <label for="fin" class="form-label">Mois/Année fin :</label>
+            <input type="month" class="form-control" id="fin" />
+          </div>
+          <div class="col-md-4 d-grid align-items-end">
+            <button class="btn btn-primary mt-3" onclick="chargerInterets()">
+              <i class="fas fa-filter me-2"></i>Filtrer
+            </button>
+          </div>
         </div>
 
         <div class="row fade-in g-4">
-            <div class="col-md-6">
-                <div class="card-blanche">
-                    <div class="table-responsive" style="max-height: 400px; overflow-y:auto;">
-                        <table class="table table-bordered table-striped" id="table-interets">
-                            <thead class="table-light">
-                            <tr>
-                                <th>Mois</th>
-                                <th>Intérêts Totaux (Ar)</th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
+          <div class="col-md-6">
+            <div class="card-blanche">
+              <div
+                class="table-responsive"
+                style="max-height: 400px; overflow-y: auto"
+              >
+                <table
+                  class="table table-bordered table-striped"
+                  id="table-interets"
+                >
+                  <thead class="table-light">
+                    <tr>
+                      <th>Mois</th>
+                      <th>Intérêts Totaux (Ar)</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
             </div>
-            <div class="col-md-6">
-                <div class="card-blanche d-flex align-items-center justify-content-center">
-                    <canvas id="interetsChart"></canvas>
-                </div>
+          </div>
+          <div class="col-md-6">
+            <div
+              class="card-blanche d-flex align-items-center justify-content-center"
+            >
+              <canvas id="interetsChart"></canvas>
             </div>
+          </div>
         </div>
-    </div>
-</main>
+      </div>
+    </main>
 
 <script>
      const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
 
     let chart;
 
-    function ajax(method, url, data, callback) {
+      function ajax(method, url, data, callback) {
         const xhr = new XMLHttpRequest();
         xhr.open(method, apiBase + url, true);
         xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText));
-            }
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(JSON.parse(xhr.responseText));
+          }
         };
         xhr.send(data);
-    }
+      }
 
-    function chargerInterets() {
+      function chargerInterets() {
         const debut = document.getElementById("debut").value;
         const fin = document.getElementById("fin").value;
 
         if (!debut || !fin) {
-            alert("Veuillez sélectionner les dates de début et de fin.");
-            return;
+          alert("Veuillez sélectionner les dates de début et de fin.");
+          return;
         }
 
-        ajax("GET", `/prets/interets?debut=${debut}&fin=${fin}`, null, (data) => {
+        ajax(
+          "GET",
+          `/prets/interets?debut=${debut}&fin=${fin}`,
+          null,
+          (data) => {
             const tbody = document.querySelector("#table-interets tbody");
             tbody.innerHTML = "";
 
             let labels = [];
             let values = [];
 
-            const [anneeDebut, moisDebut] = debut.split('-').map(Number);
-            const [anneeFin, moisFin] = fin.split('-').map(Number);
+            const [anneeDebut, moisDebut] = debut.split("-").map(Number);
+            const [anneeFin, moisFin] = fin.split("-").map(Number);
 
             if (anneeDebut === anneeFin) {
-                for (let m = 1; m <= 12; m++) {
-                    const mm = m < 10 ? "0"+m : m;
-                    labels.push(`${anneeDebut}-${mm}`);
-                }
+              for (let m = 1; m <= 12; m++) {
+                const mm = m < 10 ? "0" + m : m;
+                labels.push(`${anneeDebut}-${mm}`);
+              }
             } else {
-                let currentYear = anneeDebut;
-                let currentMonth = moisDebut;
-                while (currentYear < anneeFin || (currentYear === anneeFin && currentMonth <= moisFin)) {
-                    const mm = currentMonth < 10 ? "0"+currentMonth : currentMonth;
-                    labels.push(`${currentYear}-${mm}`);
-                    currentMonth++;
-                    if (currentMonth > 12) {
-                        currentMonth = 1;
-                        currentYear++;
-                    }
+              let currentYear = anneeDebut;
+              let currentMonth = moisDebut;
+              while (
+                currentYear < anneeFin ||
+                (currentYear === anneeFin && currentMonth <= moisFin)
+              ) {
+                const mm =
+                  currentMonth < 10 ? "0" + currentMonth : currentMonth;
+                labels.push(`${currentYear}-${mm}`);
+                currentMonth++;
+                if (currentMonth > 12) {
+                  currentMonth = 1;
+                  currentYear++;
                 }
+              }
             }
 
             const interetsMap = {};
-            data.forEach(i => {
-                interetsMap[i.mois_annee] = i.interets_totaux;
+            data.forEach((i) => {
+              interetsMap[i.mois_annee] = i.interets_totaux;
             });
 
-            labels.forEach(label => {
-                const val = interetsMap[label] || 0;
-                values.push(val);
-                if(val > 0){
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${label}</td><td>${val.toLocaleString('fr-FR', {minimumFractionDigits: 2})} Ar</td>`;
-                    tbody.appendChild(tr);
-                }
+            labels.forEach((label) => {
+              const val = interetsMap[label] || 0;
+              values.push(val);
+              if (val > 0) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${label}</td><td>${val.toLocaleString(
+                  "fr-FR",
+                  { minimumFractionDigits: 2 }
+                )} Ar</td>`;
+                tbody.appendChild(tr);
+              }
             });
 
             afficherGraphique(labels, values);
-        });
-    }
+          }
+        );
+      }
 
-    function afficherGraphique(labels, data) {
-        const ctx = document.getElementById('interetsChart').getContext('2d');
+      function afficherGraphique(labels, data) {
+        const ctx = document.getElementById("interetsChart").getContext("2d");
         if (chart) chart.destroy();
         chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Intérêts Totaux (Ar)',
-                    data: data,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Intérêts Totaux (Ar)",
+                data: data,
+                backgroundColor: "rgba(54, 162, 235, 0.6)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  callback: function (value) {
+                    return value.toLocaleString("fr-FR") + " Ar";
+                  },
+                },
+              },
             },
-            options: {
-                maintainAspectRatio: false,
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString('fr-FR') + ' Ar';
-                            }
-                        }
-                    }
-                }
-            }
+          },
         });
-    }
+      }
 
-    document.getElementById("sidebarToggle").addEventListener("click", () => {
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
         document.getElementById("sidebar").classList.toggle("collapsed");
-        document.getElementById("mainContent").classList.toggle("sidebar-collapsed");
-    });
-</script>
-
-</body>
+        document
+          .getElementById("mainContent")
+          .classList.toggle("sidebar-collapsed");
+      });
+    </script>
+  </body>
 </html>

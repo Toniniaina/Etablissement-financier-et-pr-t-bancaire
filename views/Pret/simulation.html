@@ -1,92 +1,145 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Simulation de Prêt</title>
 
     <!-- Bootstrap & FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="../../scss/style.scss"/>
-</head>
-<body>
-<!-- Header -->
-<header class="header">
-    <div class="container-fluid">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../scss/style.scss" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container-fluid">
         <div class="d-flex align-items-center">
-            <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-            <div class="logo ms-3">
-                <i class="fas fa-university"></i>
-                <span>FinanceBank</span>
-            </div>
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="logo ms-3">
+            <i class="fas fa-university"></i>
+            <span>FinanceBank</span>
+          </div>
         </div>
         <div class="header-actions">
-            <button class="btn btn-outline-light btn-sm"><i class="fas fa-user"></i> Profil</button>
-            <button class="btn btn-outline-light btn-sm"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-user"></i> Profil
+          </button>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </button>
         </div>
-    </div>
-</header>
+      </div>
+    </header>
 
-<!-- Sidebar -->
-<nav class="sidebar" id="sidebar">
-    <div class="sidebar-header">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
         <h5>Menu Principal</h5>
         <div class="sidebar-subtitle">Gestion Financière</div>
-    </div>
-    <div class="nav-menu">
-        <div class="nav-item"><a href="../../home.php" class="nav-link"><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a></div>
-        <div class="nav-item"><a href="simulation.html" class="nav-link active"><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a></div>
-        <div class="nav-item"><a href="pretForm.html" class="nav-link"><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a></div>
-        <div class="nav-item"><a href="liste.html" class="nav-link"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
-        <div class="nav-item"><a href="echeancier.html" class="nav-link "><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
-        <div class="nav-item"><a href="interet.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
-        <div class="nav-item"><a href="simulationCompare.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Comparer Simulqtion</span></a></div>
-        <div class="nav-item"><a href="simulationCompare.html" class="nav-link"><i class="fas fa-balance-scale mr-3"></i><span>Comparer Simulation</span></a></div>
-
-
-    </div>
-    <div class="sidebar-footer">
-        <div class="user-info">
-            <div class="avatar"><i class="fas fa-user"></i></div>
-            <div class="user-details">
-                <div class="user-name">Admin</div>
-                <div class="user-role">Gestionnaire</div>
-            </div>
+      </div>
+      <div class="nav-menu">
+        <div class="nav-item">
+          <a href="../Fond/fondStat.html" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Statistiques des Fonds</span></a
+          >
         </div>
-    </div>
-</nav>
+        <div class="nav-item">
+          <a href="../../home.php" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Gestion des Fonds</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="simulation.html" class="nav-link active"
+            ><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="pretForm.html" class="nav-link"
+            ><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="liste.html" class="nav-link"
+            ><i class="fas fa-list"></i><span>Liste des Prêts</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="echeancier.html" class="nav-link"
+            ><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a
+          >
+        </div>
+        <div class="nav-item">
+          <a href="interet.html" class="nav-link"
+            ><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a
+          >
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar"><i class="fas fa-user"></i></div>
+          <div class="user-details">
+            <div class="user-name">Admin</div>
+            <div class="user-role">Gestionnaire</div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-<!-- Main Content -->
-<main class="main-content" id="mainContent">
-    <div class="content-wrapper">
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+      <div class="content-wrapper">
         <div class="page-header">
-            <h1><i class="fas fa-calculator me-3"></i>Simulation de Prêt</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Accueil</a></li>
-                    <li class="breadcrumb-item active">Simulation de Prêt</li>
-                </ol>
-            </nav>
+          <h1><i class="fas fa-calculator me-3"></i>Simulation de Prêt</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="#">Accueil</a></li>
+              <li class="breadcrumb-item active">Simulation de Prêt</li>
+            </ol>
+          </nav>
         </div>
 
         <!-- Formulaire -->
         <div class="form-section fade-in">
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="montant" class="form-label">Montant à emprunter</label>
-                    <input type="number" class="form-control" id="montant" placeholder="Ex: 1 000 000" min="1000"/>
-                </div>
-                <div class="col-md-4">
-                    <label for="duree" class="form-label">Durée (en mois)</label>
-                    <input type="number" class="form-control" id="duree" placeholder="Ex: 12" min="1"/>
-                </div>
-                <div class="col-md-4">
-                    <label for="type" class="form-label">Type de prêt</label>
-                    <select class="form-select" id="type"></select>
-                </div>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label for="montant" class="form-label"
+                >Montant à emprunter</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="montant"
+                placeholder="Ex: 1 000 000"
+                min="1000"
+              />
             </div>
-            <button class="btn btn-success" onclick="calculer()"><i class="fas fa-calculator me-2"></i>Calculer</button>
+            <div class="col-md-4">
+              <label for="duree" class="form-label">Durée (en mois)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="duree"
+                placeholder="Ex: 12"
+                min="1"
+              />
+            </div>
+            <div class="col-md-4">
+              <label for="type" class="form-label">Type de prêt</label>
+              <select class="form-select" id="type"></select>
+            </div>
+          </div>
+          <button class="btn btn-success" onclick="calculer()">
+            <i class="fas fa-calculator me-2"></i>Calculer
+          </button>
         </div>
 
         <!-- Résultat -->
@@ -105,17 +158,20 @@
     const apiBase = "/ETU003131/t/Etablissement-financier-et-pr-t-bancaire/ws";
     let tauxPret = [];
 
-    function ajax(method, url, data, callback) {
+      function ajax(method, url, data, callback) {
         const xhr = new XMLHttpRequest();
         xhr.open(method, apiBase + url, true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
         xhr.onreadystatechange = () => {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                callback(JSON.parse(xhr.responseText));
-            }
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(JSON.parse(xhr.responseText));
+          }
         };
         xhr.send(data);
-    }
+      }
 
     function sauvegarderSimulation() {
         if (!derniereSimulation) {
@@ -144,28 +200,28 @@
 
     function chargerTaux() {
         ajax("GET", "/taux", null, (data) => {
-            tauxPret = data;
-            const select = document.getElementById("type");
-            data.forEach((t) => {
-                const opt = document.createElement("option");
-                opt.value = t.id_types_pret;
-                opt.textContent = `${t.nom_type_pret} (${t.pourcentage}%/an)`;
-                select.appendChild(opt);
-            });
+          tauxPret = data;
+          const select = document.getElementById("type");
+          data.forEach((t) => {
+            const opt = document.createElement("option");
+            opt.value = t.id_types_pret;
+            opt.textContent = `${t.nom_type_pret} (${t.pourcentage}%/an)`;
+            select.appendChild(opt);
+          });
         });
-    }
+      }
 
-    function calculer() {
+      function calculer() {
         const montant = parseFloat(document.getElementById("montant").value);
         const duree = parseInt(document.getElementById("duree").value);
         const idType = parseInt(document.getElementById("type").value);
 
         if (!montant || !duree || !idType) {
-            document.getElementById("resultat").style.display = "none";
-            return;
+          document.getElementById("resultat").style.display = "none";
+          return;
         }
 
-        const type = tauxPret.find(t => t.id_types_pret == idType);
+        const type = tauxPret.find((t) => t.id_types_pret == idType);
         if (!type) return;
 
         const tauxAnnuel = parseFloat(type.pourcentage);
@@ -202,15 +258,17 @@
     // Initialiser
     document.addEventListener("DOMContentLoaded", () => {
         chargerTaux();
-    });
+      });
 
-    // Sidebar responsive
-    document.getElementById('sidebarToggle').addEventListener('click', function () {
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        sidebar.classList.toggle('collapsed');
-        mainContent.classList.toggle('sidebar-collapsed');
-    });
-</script>
-</body>
+      // Sidebar responsive
+      document
+        .getElementById("sidebarToggle")
+        .addEventListener("click", function () {
+          const sidebar = document.getElementById("sidebar");
+          const mainContent = document.getElementById("mainContent");
+          sidebar.classList.toggle("collapsed");
+          mainContent.classList.toggle("sidebar-collapsed");
+        });
+    </script>
+  </body>
 </html>

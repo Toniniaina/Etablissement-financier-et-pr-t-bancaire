@@ -54,6 +54,11 @@
                 </a>
             </div>
             <div class="nav-item">
+          <a href="../Fond/fondStat.html" class="nav-link"
+            ><i class="fas fa-coins"></i><span>Statistiques des Fonds</span></a
+          >
+        </div>
+            <div class="nav-item">
                 <a href="views/Pret/simulation.html" class="nav-link" onclick="showSection('simulation')">
 
                     <i class="fas fa-calculator"></i>
