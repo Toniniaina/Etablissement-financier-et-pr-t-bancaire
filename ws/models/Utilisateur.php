@@ -7,14 +7,14 @@ class Utilisateur
     public static function getAll()
     {
         $db = getDB();
-        $stmt = $db->query("SELECT * FROM utilisateurs");
+        $stmt = $db->query("SELECT * FROM banque_utilisateurs");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function getById($id_utilisateurs)
     {
         $db = getDB();
-        $stmt = $db->prepare("SELECT * FROM utilisateurs WHERE id_utilisateurs = ?");
+        $stmt = $db->prepare("SELECT * FROM banque_utilisateurs WHERE id_utilisateurs = ?");
         $stmt->execute([$id_utilisateurs]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -22,7 +22,7 @@ class Utilisateur
     public static function getByEmail($email)
     {
         $db = getDB();
-        $stmt = $db->prepare("SELECT * FROM utilisateurs WHERE email = ?");
+        $stmt = $db->prepare("SELECT * FROM banque_utilisateurs WHERE email = ?");
         $stmt->execute([$email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -30,7 +30,7 @@ class Utilisateur
     public static function create($data)
     {
         $db = getDB();
-        $stmt = $db->prepare("INSERT INTO utilisateurs (nom_utilisateurs, prenom_utilisateurs, email, mot_de_passe) VALUES (?, ?, ?, ?)");
+        $stmt = $db->prepare("INSERT INTO banque_utilisateurs (nom_utilisateurs, prenom_utilisateurs, email, mot_de_passe) VALUES (?, ?, ?, ?)");
         $stmt->execute([
             $data->nom_utilisateurs,
             $data->prenom_utilisateurs,
@@ -43,7 +43,7 @@ class Utilisateur
     public static function update($id_utilisateurs, $data)
     {
         $db = getDB();
-        $stmt = $db->prepare("UPDATE utilisateurs SET nom_utilisateurs = ?, prenom_utilisateurs = ?, email = ?, mot_de_passe = ? WHERE id_utilisateurs = ?");
+        $stmt = $db->prepare("UPDATE banque_utilisateurs SET nom_utilisateurs = ?, prenom_utilisateurs = ?, email = ?, mot_de_passe = ? WHERE id_utilisateurs = ?");
         $stmt->execute([
             $data->nom_utilisateurs,
             $data->prenom_utilisateurs,
@@ -56,7 +56,7 @@ class Utilisateur
     public static function delete($id_utilisateurs)
     {
         $db = getDB();
-        $stmt = $db->prepare("DELETE FROM utilisateurs WHERE id_utilisateurs = ?");
+        $stmt = $db->prepare("DELETE FROM banque_utilisateurs WHERE id_utilisateurs = ?");
         $stmt->execute([$id_utilisateurs]);
     }
 }

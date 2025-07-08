@@ -3,7 +3,7 @@ DROP DATABASE IF EXISTS banque;
 CREATE DATABASE banque;
 USE banque;
 
-CREATE TABLE utilisateurs(
+CREATE TABLE banque_utilisateurs(
     id_utilisateurs INT AUTO_INCREMENT PRIMARY KEY,
     nom_utilisateurs VARCHAR(50) NOT NULL,
     prenom_utilisateurs VARCHAR(50) NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE simulations (
     interet_total NUMERIC(15, 2) NOT NULL,
     montant_total NUMERIC(15, 2) NOT NULL,
     mensualite NUMERIC(15, 2) NOT NULL,
-    id_types_pret INT REFERENCES types_pret(id_types_pret)
+    FOREIGN KEY (id_types_pret)  REFERENCES types_pret(id_types_pret)
 );
 
 
