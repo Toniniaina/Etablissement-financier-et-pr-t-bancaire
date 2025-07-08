@@ -116,9 +116,7 @@ class Pret {
 
         foreach ($tousPrets as $pret) {
             $statut = self::getDernierStatutPret($pret['id_prets']);
-            if (!$statut || !in_array($statut['nom_status'], ['Approuve', 'En cours de remboursement'])) continue;
-
-            // Si délai de grâce > 0, chercher la date d'approbation (sinon date_debut)
+            if (!$statut || !in_array($statut['nom_status'], ['approuve', 'En cours de remboursement'])) continue;
             $delaiGrace = isset($pret['delai_grace']) ? (int)$pret['delai_grace'] : 0;
             $dateDebut = $pret['date_debut'];
             if ($delaiGrace > 0) {
@@ -226,7 +224,7 @@ class Pret {
         $stmt->execute($params);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
     public static function getEcheancier($idPret)
     {
         $db = getDB();
@@ -238,21 +236,31 @@ class Pret {
         $capital = $pret['montant_prets'];
         $tauxAnnuel = $pret['pourcentage'];
         $dureeMois = $pret['duree_en_mois'];
+        $delaiGrace = $pret['delai_grace'];
         $dateDebut = $pret['date_debut'];
         $assurance = $pret['assurance'];
-        $assuranceParmois=self::calculerAssurance($assurance,$capital);
+        $nbMensualites = max(1, $dureeMois - $delaiGrace);
 
-        $mensualites = self::calculerMensualite($capital, $tauxAnnuel, $dureeMois);
-        $mensualite=$mensualites+$assuranceParmois;
+        $assuranceParmois = self::calculerAssurance($assurance, $capital, $nbMensualites);
+
+
+        // Cas limite : si delai >= durée -> 1 remboursement global
+        $nbMensualites = max(1, $dureeMois - $delaiGrace);
+
+        $mensualites = self::calculerMensualite($capital, $tauxAnnuel, $nbMensualites);
+        $mensualite = $mensualites + $assuranceParmois;
         $tauxMensuel = $tauxAnnuel / 12 / 100;
         $reste = $capital;
 
         $mois = new DateTime($dateDebut);
         $echeancier = [];
 
-        for ($i = 0; $i < $dureeMois; $i++) {
+        // Décaler la date de début après le délai de grâce
+        $mois->modify("+$delaiGrace month");
+
+        for ($i = 0; $i < $nbMensualites; $i++) {
             $interet = round($reste * $tauxMensuel, 2);
-            $principal = round($mensualite - $interet-$assuranceParmois, 2);
+            $principal = round($mensualite - $interet - $assuranceParmois, 2);
             $reste = round($reste - $principal, 2);
             $echeancier[] = [
                 'mois' => $mois->format('Y-m'),
@@ -260,13 +268,14 @@ class Pret {
                 'interet' => $interet,
                 'principal' => $principal,
                 'reste' => max($reste, 0),
-                'assurance'=>$assuranceParmois
+                'assurance' => $assuranceParmois
             ];
             $mois->modify('+1 month');
         }
 
         return $echeancier;
     }
+
     public static function getDateDebutReelle($idPret) {
         $db = getDB();
         $stmt = $db->prepare("
@@ -281,11 +290,12 @@ class Pret {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? $row['date_mouvement'] : null;
     }
-    public static function calculerAssurance($assurance, $capital) {
-        $valeur = $assurance*$capital/100;
-        $assuranceParmois=$valeur/12;
-        return $assuranceParmois;
+    public static function calculerAssurance($assurance, $capital, $nbMoisRemboursement) {
+        $valeur = $assurance * $capital / 100;
+        $nbMois = max(1, $nbMoisRemboursement); // éviter division par 0
+        return $valeur / $nbMois;
     }
+
 
 
 }
