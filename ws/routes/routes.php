@@ -4,6 +4,7 @@ require_once __DIR__ . '/../controllers/ClientController.php';
 require_once __DIR__ . '/../controllers/PretController.php';
 require_once __DIR__ . '/../controllers/PretController.php';
 require_once __DIR__ . '/../controllers/FondController.php';
+require_once __DIR__ . '/../controllers/RemboursementController.php';
 require_once __DIR__ . '/../controllers/DetailFondController.php';
 require_once __DIR__ . '/../controllers/TauxController.php';
 
@@ -32,7 +33,7 @@ Flight::route('POST /prets', ['PretController', 'ajouterPret']);
 Flight::route('POST /prets/search', ['PretController', 'rechercher']);
 Flight::route('POST /prets/approuver', ['PretController', 'approuver']);
 Flight::route('POST /prets/rejeter', ['PretController', 'rejeter']);
-Flight::route('POST /prets/rembourser', ['PretController', 'rejeter']);
+Flight::route('POST /prets/rembourser', ['RemboursementController', 'enregistrer']);
 
 
 Flight::route('GET /fonds', ['FondController', 'getAll']);
@@ -41,6 +42,8 @@ Flight::route('POST /fonds', ['FondController', 'create']);
 Flight::route('PUT /fonds/@id', ['FondController', 'update']);
 Flight::route('DELETE /fonds/@id', ['FondController', 'delete']);
 Flight::route('GET /fond_actuel', ['DetailFondController', 'getFondActuel']);
+Flight::route('POST /fond/stats', ['FondController', 'fondsParMois']);
+
 
 Flight::route('GET /taux', ['TauxController', 'getAll']);
 

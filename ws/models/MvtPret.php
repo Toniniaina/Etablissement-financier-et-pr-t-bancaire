@@ -72,4 +72,35 @@ class MvtPret {
             $data['date_mouvement']
         ]);
     }
+
+    public static function changerStatutPret($idPret, $dateMouvement, $nomStatut)
+    {
+        $db = getDB();
+
+        // Vérification date
+        $stmtDate = $db->prepare("SELECT MAX(date_mouvement) FROM Mouvement_prets WHERE id_prets = ?");
+        $stmtDate->execute([$idPret]);
+        $dernierDateMouvement = $stmtDate->fetchColumn();
+
+        if ($dernierDateMouvement !== false && $dateMouvement < $dernierDateMouvement) {
+            throw new Exception("La date ne peut pas être antérieure à la dernière date de mouvement existante ($dernierDateMouvement).");
+        }
+
+        // Récupération ID statut
+        $stmt = $db->prepare("SELECT id_status_prets FROM Status_prets WHERE LOWER(nom_status) = LOWER(?)");
+        $stmt->execute([$nomStatut]);
+        $idStatus = $stmt->fetchColumn();
+
+        if (!$idStatus) {
+            throw new Exception("Statut '$nomStatut' non trouvé");
+        }
+
+        // Insertion mouvement
+        $stmt2 = $db->prepare("INSERT INTO Mouvement_prets (id_prets, id_status_prets, date_mouvement) VALUES (?, ?, ?)");
+        $stmt2->execute([$idPret, $idStatus, $dateMouvement]);
+
+        return true;
+    }
+
+    
 }

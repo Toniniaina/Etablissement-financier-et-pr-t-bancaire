@@ -45,4 +45,24 @@ class FondController {
         Fond::delete($id);
         Flight::json(['message' => 'Fonds supprimé']);
     }
+
+    public static function fondsParMois()
+    {
+        $moisDebut = $_POST['mois_debut'] ?? '';
+        $moisFin = $_POST['mois_fin'] ?? '';
+
+        try {
+            if (!$moisDebut || !$moisFin) {
+                // Pas de filtre -> tous les mois
+                $result = Fond::getFondsParMois(null, null);
+                Flight::json($result);
+            } elseif ($moisDebut === $moisFin) {
+                // Un seul mois
+                $result = Fond::getFondsPourUnMois($moisDebut);
+                Flight::json([$result]);
+            }
+        } catch (Exception $e) {
+            Flight::json(['error' => $e->getMessage()], 500);
+        }
+    }
 }
