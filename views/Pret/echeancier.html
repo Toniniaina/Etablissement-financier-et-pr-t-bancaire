@@ -7,10 +7,24 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../scss/style.scss" />
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .card-blanche {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .table thead th {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
 
-<!-- Header -->
 <header class="header">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center">
@@ -26,7 +40,6 @@
     </div>
 </header>
 
-<!-- Sidebar -->
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <h5>Menu Principal</h5>
@@ -37,7 +50,7 @@
         <div class="nav-item"><a href="simulation.html" class="nav-link"><i class="fas fa-calculator"></i><span>Simulation Prêt</span></a></div>
         <div class="nav-item"><a href="pretForm.html" class="nav-link"><i class="fas fa-plus-circle"></i><span>Ajouter Prêt</span></a></div>
         <div class="nav-item"><a href="liste.html" class="nav-link"><i class="fas fa-list"></i><span>Liste des Prêts</span></a></div>
-        <div class="nav-item"><a href="echeancier.html" class="nav-link  active"><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
+        <div class="nav-item"><a href="echeancier.html" class="nav-link active"><i class="fas fa-calendar-alt"></i><span>Échéancier</span></a></div>
         <div class="nav-item"><a href="interet.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Intérêts par Mois</span></a></div>
     </div>
     <div class="sidebar-footer">
@@ -51,7 +64,6 @@
     </div>
 </nav>
 
-<!-- Main -->
 <main class="main-content" id="mainContent">
     <div class="content-wrapper">
         <div class="page-header">
@@ -70,36 +82,42 @@
         </div>
 
         <!-- Clients -->
-        <div class="table-responsive fade-in">
-            <h5 class="mt-4">Clients trouvés</h5>
-            <table class="table table-bordered table-striped" id="table-clients">
-                <thead class="table-light">
-                <tr><th>ID</th><th>Nom</th><th>Prénom</th><th>Action</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div class="card-blanche fade-in">
+            <h5>Clients trouvés</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="table-clients">
+                    <thead>
+                    <tr><th>Nom</th><th>Prénom</th><th>Action</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Prêts -->
-        <div class="table-responsive fade-in">
-            <h5 class="mt-5">Prêts du client</h5>
-            <table class="table table-bordered table-striped" id="table-prets">
-                <thead class="table-light">
-                <tr><th>ID</th><th>Montant</th><th>Date Début</th><th>Durée (mois)</th><th>Action</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div class="card-blanche fade-in">
+            <h5>Prêts du client</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="table-prets">
+                    <thead>
+                    <tr><th>Montant</th><th>Date Début</th><th>Durée (mois)</th><th>Action</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Échéancier -->
-        <div class="table-responsive fade-in">
-            <h5 class="mt-5">Échéancier du prêt</h5>
-            <table class="table table-bordered table-striped" id="table-echeancier">
-                <thead class="table-light">
-                <tr><th>Mois</th><th>Mensualité</th><th>Intérêt</th><th>Principal</th><th>Reste à payer</th></tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div class="card-blanche fade-in" id="echeancier-section">
+            <h5>Échéancier du prêt</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="table-echeancier">
+                    <thead>
+                    <tr><th>Mois</th><th>Mensualité</th><th>Intérêt</th><th>Principal</th><th>Reste à payer</th><th>Assurance</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </main>
@@ -129,11 +147,10 @@
             resultats.forEach(client => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-          <td>${client.id_clients}</td>
-          <td>${client.nom_clients}</td>
-          <td>${client.prenom_clients}</td>
-          <td><button class="btn btn-sm btn-outline-primary" onclick="chargerPretsClient(${client.id_clients})"><i class="fas fa-eye"></i> Voir prêts</button></td>
-        `;
+                  <td>${client.nom_clients}</td>
+                  <td>${client.prenom_clients}</td>
+                  <td><button class="btn btn-sm btn-outline-primary" onclick="chargerPretsClient(${client.id_clients})"><i class="fas fa-eye"></i> Voir prêts</button></td>
+                `;
                 tbody.appendChild(tr);
             });
         });
@@ -149,19 +166,18 @@
             prets.forEach(p => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-          <td>${p.id_prets}</td>
-          <td>${parseFloat(p.montant_prets).toLocaleString('fr-FR')} Ar</td>
-          <td>${p.date_debut}</td>
-          <td>${p.duree_en_mois}</td>
-          <td>
-            <button class="btn btn-sm btn-success me-1" onclick="chargerEcheancier(${p.id_prets})">
-              <i class="fas fa-calendar-alt"></i> Échéancier
-            </button>
-            <a href="${base}/export/export-pdf.php?id=${p.id_prets}" target="_blank" class="btn btn-sm btn-outline-danger">
-              <i class="fas fa-file-pdf"></i> PDF
-            </a>
-          </td>
-        `;
+                  <td>${parseFloat(p.montant_prets).toLocaleString('fr-FR')} Ar</td>
+                  <td>${p.date_debut}</td>
+                  <td>${p.duree_en_mois}</td>
+                  <td>
+                    <button class="btn btn-sm btn-success me-1" onclick="chargerEcheancier(${p.id_prets})">
+                      <i class="fas fa-calendar-alt"></i> Échéancier
+                    </button>
+                    <a href="${base}/export/export-pdf.php?id=${p.id_prets}" target="_blank" class="btn btn-sm btn-outline-danger">
+                      <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                  </td>
+                `;
                 tbody.appendChild(tr);
             });
         });
@@ -174,14 +190,18 @@
             data.forEach(e => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-          <td>${e.mois}</td>
-          <td>${e.mensualite.toLocaleString('fr-FR')} Ar</td>
-          <td>${e.interet.toLocaleString('fr-FR')} Ar</td>
-          <td>${e.principal.toLocaleString('fr-FR')} Ar</td>
-          <td>${e.reste.toLocaleString('fr-FR')} Ar</td>
-        `;
+                  <td>${e.mois}</td>
+                  <td>${e.mensualite.toLocaleString('fr-FR')} Ar</td>
+                  <td>${e.interet.toLocaleString('fr-FR')} Ar</td>
+                  <td>${e.principal.toLocaleString('fr-FR')} Ar</td>
+                  <td>${e.reste.toLocaleString('fr-FR')} Ar</td>
+                  <td>${e.assurance.toLocaleString('fr-FR')} Ar</td>
+                `;
                 tbody.appendChild(tr);
             });
+
+            // ➤ Scroll vers la section échéancier
+            document.getElementById("echeancier-section").scrollIntoView({ behavior: 'smooth' });
         });
     }
 

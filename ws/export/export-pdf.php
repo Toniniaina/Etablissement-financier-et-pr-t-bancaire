@@ -21,14 +21,14 @@ if (!$dateApprobationStr) die("Date d'approbation introuvable.");
 
 $dateApprobation = new DateTime($dateApprobationStr);
 
-// Appliquer le délai de grâce
+// Date de début de remboursement = dateApprobation + delai_grace
 $dateDebutRemboursement = clone $dateApprobation;
 if ((int)$pret['delai_grace'] > 0) {
     $dateDebutRemboursement->modify('+' . $pret['delai_grace'] . ' months');
 }
 
-// Calculer la date de fin estimée = dateDebutRemboursement + duree_en_mois
-$dateFinEstimee = (clone $dateDebutRemboursement)->modify('+' . $pret['duree_en_mois'] . ' months');
+// ❗ Date de fin estimée = dateApprobation + durée_en_mois (pas dateDebutRemboursement)
+$dateFinEstimee = (clone $dateApprobation)->modify('+' . $pret['duree_en_mois'] . ' months');
 
 $pdf = new FPDF();
 $pdf->AddPage();
@@ -44,7 +44,7 @@ $pdf->Cell(0, 8, utf8_decode("Client : {$client['nom_clients']} {$client['prenom
 $pdf->Cell(0, 8, utf8_decode("Date d'approbation : " . $dateApprobation->format('d/m/Y')), 0, 1);
 $pdf->Cell(0, 8, utf8_decode("Délai de grâce : {$pret['delai_grace']} mois"), 0, 1);
 $pdf->Cell(0, 8, utf8_decode("Date de début de remboursement : " . $dateDebutRemboursement->format('d/m/Y')), 0, 1);
-$pdf->Cell(0, 8, utf8_decode("Durée du remboursement : {$pret['duree_en_mois']} mois"), 0, 1);
+$pdf->Cell(0, 8, utf8_decode("Durée du prêt : {$pret['duree_en_mois']} mois"), 0, 1);
 $pdf->Cell(0, 8, utf8_decode("Date de fin estimée : " . $dateFinEstimee->format('d/m/Y')), 0, 1);
 $pdf->Ln(5);
 
@@ -58,7 +58,7 @@ $pdf->Cell(30, 10, utf8_decode('Assurance'), 1);
 $pdf->Cell(40, 10, utf8_decode('Reste à payer'), 1);
 $pdf->Ln();
 
-// Données échéancier
+// Lignes échéancier
 $pdf->SetFont('Arial', '', 10);
 foreach ($echeancier as $ligne) {
     $pdf->Cell(30, 10, $ligne['mois'], 1);
